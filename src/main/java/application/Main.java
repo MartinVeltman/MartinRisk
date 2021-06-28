@@ -1,7 +1,6 @@
 package application;
 
-import controllers.GameController;
-import controllers.SpelbordController;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,12 +8,14 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         State.stage = primaryStage;
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("FXML/mainMenuScreen.fxml"));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("FXML/mainMenuScreen.fxml")));
         primaryStage.setTitle("Risk");
         primaryStage.getIcons().add(new Image( "images/risklogo.png"));
         primaryStage.setScene(new Scene(root, 1280, 720));

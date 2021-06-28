@@ -11,12 +11,10 @@ import javafx.stage.Stage;
 import models.PlayerModel;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class JoinLobbyController {
 
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
     LoginController loginController = new LoginController();
 
     PlayerModel playerModel;
@@ -28,7 +26,7 @@ public class JoinLobbyController {
 
     public JoinLobbyController(){
         System.out.println("I am joinlobby alive");
-        playerModel = playerModel.getPlayerModelInstance();
+        playerModel = PlayerModel.getPlayerModelInstance();
     }
 
     public void switchToInsertLobbycode(ActionEvent event) throws IOException{
@@ -38,9 +36,9 @@ public class JoinLobbyController {
 
 
             if (loginController.checkJoin(playerModel.getUsername(), codeField.getText())){
-                root = FXMLLoader.load(getClass().getClassLoader().getResource("FXML/Lobby.fxml"));
-                stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-                scene = new Scene(root);
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("FXML/Lobby.fxml")));
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.show();
             }
