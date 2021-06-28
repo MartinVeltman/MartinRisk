@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import models.PlayerModel;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class PreLobbyController {
 
@@ -24,27 +25,26 @@ public class PreLobbyController {
     TextField usernameField;
 
     public PreLobbyController(){
-        System.out.println("I am prelobby alive");
-        playerModel = playerModel.getPlayerModelInstance();
+        playerModel = PlayerModel.getPlayerModelInstance();
     }
 
-    public void switchToLobby(ActionEvent event) throws IOException {
-
-        root = FXMLLoader.load(getClass().getClassLoader().getResource("FXML/Pre-Lobby.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
+//    public void switchToLobby(ActionEvent event) throws IOException {
+//
+//        root = FXMLLoader.load(getClass().getClassLoader().getResource("FXML/Pre-Lobby.fxml"));
+//        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+//        scene = new Scene(root);
+//        stage.setScene(scene);
+//        stage.show();
+//    }//TODO: kan miss weg
 
     public void switchToCreatedLobby(ActionEvent event) throws IOException {
         playerModel.setUsername(usernameField.getText());
         if (loginController.emptyUsername(usernameField.getText())) {
-            System.out.println("Username is leeg");
+            System.out.println("Username is leeg"); //TODO: display dit
         } else {
             loginController.testMessage(usernameField.getText());
             loginController.checkCreate(usernameField.getText());
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("FXML/Lobby.fxml"));
+            root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("FXML/Lobby.fxml")));
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
@@ -55,14 +55,12 @@ public class PreLobbyController {
     public void switchToJoinedLobby(ActionEvent event) throws IOException {
         playerModel.setUsername(usernameField.getText());
         if (loginController.emptyUsername(usernameField.getText())) {
-            System.out.println("Username is leeg");
+            System.out.println("Username is leeg");  //TODO: display dit
         } else {
-            System.out.println("ik ben gejoined");
             playerModel.setUsername(usernameField.getText());
             System.out.println(playerModel.getUsername());
-
             loginController.testMessage(usernameField.getText());
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("FXML/JoinLobby.fxml"));
+            root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("FXML/JoinLobby.fxml")));
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
