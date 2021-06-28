@@ -1,18 +1,8 @@
 package models;
 
-import application.State;
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.*;
-import controllers.SpelbordController;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 import observers.GameObservable;
 import observers.GameObserver;
-import observers.SpelbordObserver;
-import views.SpelbordViewController;
-
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 public class GameModel implements GameObservable {
 
@@ -21,11 +11,8 @@ public class GameModel implements GameObservable {
     private int turnID;
     private boolean gameOver;
     private PlayerModel players;
+    private final List<GameObserver> observers = new ArrayList<>();
 
-    private SpelbordViewController viewer;
-//    SpelbordController spelbordController = new SpelbordController();
-    private List<GameObserver> observers = new ArrayList<GameObserver>();
-    static GameModel gameModel;
 
 //    public GameModel getGameModelInstance() {
 //        if (gameModel == null) {
@@ -43,7 +30,7 @@ public class GameModel implements GameObservable {
     }
 
     public GameModel() {
-//        spelbordController.attachlistener();
+
     }
 
     public int getTurnID() {
@@ -54,29 +41,14 @@ public class GameModel implements GameObservable {
         this.turnID = turnID;
     }
 
-    public SpelbordModel getMap() {
-        return map;
-    }
 
-    public void setMap(SpelbordModel map) {
-        this.map = map;
-    }
 
     public boolean isGameOver() {
         return gameOver;
     }
 
-    public void setGameOver(boolean gameOver) {
-        this.gameOver = gameOver;
-    }
 
-    public PlayerModel getPlayers() {
-        return players;
-    }
 
-    public void setPlayers(PlayerModel players) {
-        this.players = players;
-    }
 
     @Override
     public void register(GameObserver observer) {

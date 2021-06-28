@@ -1,18 +1,10 @@
 package models;
 
-import application.State;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
 
 public class CountryModel {
 
     private int playerID;
-    private String countryID;
+    private final String countryID;
     private int army;
 //    private String countryName;
 
@@ -31,9 +23,6 @@ public class CountryModel {
         this.playerID = 0;
     }
 
-    public void getAllCountryID(){
-
-    }
 
 //    public CountryModel(int ID,String countryID, int army){
 //        this.playerID = ID;
@@ -41,9 +30,7 @@ public class CountryModel {
 //        this.army = army;
 //    }
 
-    public int getArmy() {
-        return army;
-    }
+
 
     public void setArmy(int army){
         this.army = army;

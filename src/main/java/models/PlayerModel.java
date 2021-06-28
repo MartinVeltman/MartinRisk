@@ -1,28 +1,24 @@
 package models;
 
-import javax.swing.*;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PlayerModel{
 
-    private ArrayList<Integer> cards;
     private int turnArmies;
     private String username;
     private int turnID;
     private boolean hasTurn;
     private ArrayList<Integer> lastThrow;
-    private boolean canInterract;
-    static PlayerModel playerModel;
 
-    private Color color;
+    static PlayerModel playerModel;
 
 
     public static PlayerModel getPlayerModelInstance() {
         if (playerModel == null) {
             playerModel = new PlayerModel();
-            System.out.println("nieuwe instantie van PlayerModel is aangemaakt");
         }
         return playerModel;
     }
@@ -57,8 +53,6 @@ public class PlayerModel{
                        ArrayList lastThrow, Color color) {
         this.username = username;
         this.lastThrow = lastThrow;
-        this.cards = cards;
-        this.color=color;
     }
 
 
@@ -89,12 +83,7 @@ public class PlayerModel{
 ////       }
 //    }
 
-    public void setCountries(HashMap countries) {
-    }
 
-    public void setHasTurn() {
-        this.hasTurn = true;
-    }
 
     public String getUsername() {
         return username;
@@ -108,21 +97,7 @@ public class PlayerModel{
         return turnID;
     }
 
-    public int getTurnArmies() {
-        return turnArmies;
-    }
 
-    public void setTurnArmies(int turnArmies) {
-        this.turnArmies = turnArmies;
-    }
-
-    public boolean isHasTurn() {
-        return hasTurn;
-    }
-
-    public void setHasTurn(boolean hasTurn) {
-        this.hasTurn = hasTurn;
-    }
 
     public ArrayList<Integer> getLastThrow() {
         return lastThrow;
