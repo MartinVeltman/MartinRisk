@@ -3,13 +3,11 @@ package controllers;
 import application.State;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
-import models.GameModel;
 import models.PlayerModel;
 import models.SpelbordModel;
-import observers.GameObserver;
 import observers.LobbyObservable;
 import observers.LobbyObserver;
-import observers.SpelbordObserver;
+
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -17,17 +15,16 @@ import java.util.concurrent.ExecutionException;
 public class LoginController implements LobbyObservable {
 
     static SpelbordModel spelbordModel;
-    static LoginController loginController;
-    private static List<LobbyObserver> observers = new ArrayList<LobbyObserver>();
+    private static final List<LobbyObserver> observers = new ArrayList<>();
 
 
-    public LoginController getLoginControllerInstance() {
-        if (loginController == null) {
-            loginController = new LoginController();
-            System.out.println("nieuwe instantie van Logincontroller is aangemaakt");
-        }
-        return loginController;
-    }
+//    public LoginController getLoginControllerInstance() {
+//        if (loginController == null) {
+//            loginController = new LoginController();
+//            System.out.println("nieuwe instantie van Logincontroller is aangemaakt");
+//        }
+//        return loginController;
+//    } singelton Logincontroller wss niet nodig dan weghalen
 
     public void testMessage(String username) {
         System.out.println("de username is: " + username);
@@ -36,10 +33,7 @@ public class LoginController implements LobbyObservable {
     public String createLobbyCode() {
         int min = 100000;
         int max = 999999;
-
         int lobbycode = (int) Math.floor(Math.random() * (max - min + 1) + min);
-        System.out.println(lobbycode);
-
         String lobbyCodeString = Integer.toString(lobbycode);
         return lobbyCodeString;
     }
@@ -51,13 +45,6 @@ public class LoginController implements LobbyObservable {
 
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(lobbycode).document("players");
 
-//        Map<String, Object> playerData = new HashMap<>();
-//        playerData.put("TurnID", playerModel1.getTurnID());
-//        playerData.put("TurnArmies", playerModel1.getTurnArmies());
-//        playerData.put("username", playerModel1.getUsername());
-//        playerData.put("hasTurn", playerModel1.getHasTurn());
-//        playerData.put("countries", playerModel1.getCountries());
-
         Map<String, Object> data = new HashMap<>();
         data.put("players", Arrays.asList(playerModel1));
         data.put("gameIsRunning", false);
@@ -65,7 +52,6 @@ public class LoginController implements LobbyObservable {
         data.put("State", Arrays.asList("Spel gestart", "Speler 1 is aan de beurt"));
         data.put("attackThrow", Arrays.asList());
         data.put("defendThrow", Arrays.asList());
-
         ApiFuture<WriteResult> result = docRef.set(data);
 
         System.out.println("Update time : " + result.get().getUpdateTime());

@@ -68,19 +68,14 @@ public class LobbyController implements LobbyObserver, UpdatableController{
         docRef.addSnapshotListener((documentSnapshot, e) -> {
 
             try {
-
-                if (checkGameIsRunning()) {
-                    System.out.println("2");
+                if (checkGameIsRunning()) {  //Om een of andere redenen als je if(checkGameIsRunning() && checkIfInGame()) werkt observer gamemap laden niet
                     if (checkIfInGame()) {
-                        System.out.println("3");
-                        System.out.println("De game is running");
                         root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("FXML/GameMap.fxml")));
                         scene = new Scene(root);
 
                         Platform.runLater(() -> State.stage.setScene(scene));
 
                         SpelbordController.getGameModelInstance();
-                        System.out.println("De scene is uitgevoerd");
                     }
                 }
 
@@ -112,14 +107,6 @@ public class LobbyController implements LobbyObserver, UpdatableController{
 
     }
 
-    //gamestate wordt init op 1
-//    GameModel gameState = new GameModel(1);
-    // update gamestate naar firebase
-    //Todo Gamestate moet firebase
-
-    // let the game init here
-//    SpelbordModel hostedGame = new SpelbordModel();
-    //Todo populate the hostedgame with a ArrayList<PlayerModel> and ArrayList<CountryModel>s
 
     @FXML
     public void initialize() throws ExecutionException, InterruptedException {
@@ -162,9 +149,7 @@ public class LobbyController implements LobbyObserver, UpdatableController{
 
             assert arrayPlayerData != null;
             for (HashMap playerData : arrayPlayerData) {
-                System.out.println("playerdata player" + playerData);  //loopt door de arrays van firestore zodat je ze apart kan zien van elke player
-                myUsernameList.add((String) playerData.get("username"));
-
+                myUsernameList.add((String) playerData.get("username"));//loopt door de arrays van firestore zodat je ze apart kan zien van elke player
             }
         }
 
@@ -193,8 +178,6 @@ public class LobbyController implements LobbyObserver, UpdatableController{
         if (username1 == null) {
             return;
         }
-
-
         Platform.runLater(() -> {  //hier word de nieuwe view voor elke speler verzonden
             if (mijnUsernamesList.size() == 1) {
                 username1.setText(String.valueOf(mijnUsernamesList.get(0)));
