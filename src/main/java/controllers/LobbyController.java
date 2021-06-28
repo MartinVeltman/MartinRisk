@@ -13,45 +13,36 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import models.GameModel;
-import models.SpelbordModel;
 import observers.LobbyObservable;
 import observers.LobbyObserver;
-import observers.SpelbordObserver;
-import services.FirebaseService;
-//import views.LobbyView;
-
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class LobbyController implements LobbyObserver, UpdatableController{
 
-    private Stage stage;
     private Scene scene;
     private Parent root;
     boolean isInGame = false;
-//    LobbyView lobbyView;
-    private static LobbyController lobbyController;
 
 
-    SpelbordController spelbordController;
-    static GameModel gameModel;
+
+
     static LoginController loginController = new LoginController();
     @FXML
-    private Label username1; // voor elke privtae maken
+    private Label username1; //TODO: probeer de username imports meer dry te maken
     @FXML
-    Label username2;
+    private Label username2;
     @FXML
-    Label username3;
+    private Label username3;
     @FXML
-    Label username4;
+    private Label username4;
     @FXML
-    Label lobbyCode;
-    private LobbyController LobbyController;
+    private Label lobbyCode;
+
 
 
     public boolean checkIfInGame() {
@@ -68,11 +59,7 @@ public class LobbyController implements LobbyObserver, UpdatableController{
         ApiFuture<DocumentSnapshot> future = docRef.get();
         DocumentSnapshot document = future.get();
 
-        if ((boolean) document.getData().get("gameIsRunning")) {
-            return true;
-        } else {
-            return false;
-        }
+        return (boolean) Objects.requireNonNull(document.getData()).get("gameIsRunning");
 
     }
 
@@ -87,12 +74,10 @@ public class LobbyController implements LobbyObserver, UpdatableController{
                     if (checkIfInGame()) {
                         System.out.println("3");
                         System.out.println("De game is running");
-                        root = FXMLLoader.load(getClass().getClassLoader().getResource("FXML/GameMap.fxml"));
+                        root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("FXML/GameMap.fxml")));
                         scene = new Scene(root);
 
-                        Platform.runLater(() -> {
-                            State.stage.setScene(scene);
-                        });
+                        Platform.runLater(() -> State.stage.setScene(scene));
 
                         SpelbordController.getGameModelInstance();
                         System.out.println("De scene is uitgevoerd");
@@ -110,35 +95,15 @@ public class LobbyController implements LobbyObserver, UpdatableController{
 
 
     public LobbyController() {
-//
-//        GameController gameController = new GameController();
-//        gameController.listen(State.lobbycode, this);
-//
-//        LobbyController.registerObserver(this);
-//        attachlistener();
 
-
-        // SINGLETON patroon worden.
-
-        // als deze class niet bestaat =>> maak een nieuwe
-        // als deze al wel bestaat , geef het huidige actieve instantie op.
-
-
-
-//        System.out.println("run method");
-//        LobbyView lobbyView = new LobbyView();
-//        lobbyView.getFirebaseUsernames("110720");
-
-
-        /////
     }
 
     public void startGame(ActionEvent event) throws IOException, ExecutionException, InterruptedException {
 
         if (loginController.enoughPlayers()) {
             loginController.gameRunning();
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("FXML/GameMap.fxml"));
-            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("FXML/GameMap.fxml")));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
@@ -182,33 +147,28 @@ public class LobbyController implements LobbyObserver, UpdatableController{
             username2.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(1)));
             username3.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(2)));
             username4.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(3)));
-        } else {
-           //TODO: System.out.println("er is iets fout gegaan met de namen aan het spel toevoegen");
         }
     }
 
 
     public ArrayList<String> getFirebaseUsernames(String lobbyCode) throws ExecutionException, InterruptedException {
-        //get benodigde stuff van firestore
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(lobbyCode).document("players");
         ApiFuture<DocumentSnapshot> future = docRef.get();
         DocumentSnapshot document = future.get();
 
-        ArrayList<String> mijnUsernamesList = new ArrayList<>();
+        ArrayList<String> myUsernameList = new ArrayList<>();
         if (document.exists()) {
             ArrayList<HashMap> arrayPlayerData = (ArrayList<HashMap>) document.get("players"); //zet alle data van 'players' in array wat hashmaps bevatten
 
+            assert arrayPlayerData != null;
             for (HashMap playerData : arrayPlayerData) {
                 System.out.println("playerdata player" + playerData);  //loopt door de arrays van firestore zodat je ze apart kan zien van elke player
-                mijnUsernamesList.add((String) playerData.get("username"));
-                System.out.println(mijnUsernamesList);
+                myUsernameList.add((String) playerData.get("username"));
 
             }
-        } else {
-            System.out.println("niks");
         }
 
-        return mijnUsernamesList;
+        return myUsernameList;
     }
 
 
@@ -221,27 +181,19 @@ public class LobbyController implements LobbyObserver, UpdatableController{
 
     @Override
     public void updateDocument(DocumentSnapshot lb) {     //hier word de list voor elke speler geupdate
-        System.out.println("ASDFASDFADSFADF");
-        System.out.println(1);
-
-
         ArrayList<HashMap> arrayPlayerData = (ArrayList<HashMap>) lb.get("players"); //zet alle data van 'players' in array wat hashmaps bevatten
-
         List<String> mijnUsernamesList = new ArrayList<>();
 
+        assert arrayPlayerData != null;
         for (HashMap playerData : arrayPlayerData) {
-            System.out.println("playerdata player" + playerData);  //loopt door de arrays van firestore zodat je ze apart kan zien van elke player
-            mijnUsernamesList.add((String) playerData.get("username"));
-            System.out.println(mijnUsernamesList);
-
-
+            mijnUsernamesList.add((String) playerData.get("username"));//loopt door de arrays van firestore zodat je ze apart kan zien van elke player
         }
 
-        System.out.println("LobbyController - update methode aangeroepen");
+
         if (username1 == null) {
             return;
         }
-        // LobbyView lobbyView = new LobbyView();
+
 
         Platform.runLater(() -> {  //hier word de nieuwe view voor elke speler verzonden
             if (mijnUsernamesList.size() == 1) {
@@ -258,9 +210,7 @@ public class LobbyController implements LobbyObserver, UpdatableController{
                 username2.setText(String.valueOf(mijnUsernamesList.get(1)));
                 username3.setText(String.valueOf(mijnUsernamesList.get(2)));
                 username4.setText(String.valueOf(mijnUsernamesList.get(3)));
-            } else {
-                System.out.println("er is iets fout gegaan met de namen aan het spel toevoegen");
-            }});
+            } });
         }
 
     //    //TODO: Initialize DRY maken
@@ -271,7 +221,7 @@ public static void registerObserver(LobbyObserver sbv) {
 
     @Override
     public void update(DocumentSnapshot documentSnapshot) {
-        System.out.println(documentSnapshot.getData());
+
     }
 }
 
