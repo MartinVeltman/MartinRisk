@@ -11,7 +11,7 @@ public class PlayerModel{
     private String username;
     private int turnID;
     private boolean hasTurn;
-    private ArrayList<Integer> lastThrow;
+    private int wins;
 
     static PlayerModel playerModel;
 
@@ -41,18 +41,19 @@ public class PlayerModel{
 
     }
 
-    public PlayerModel(String username, int turnID) {
+    public PlayerModel(String username, int turnID, int wins) {
         this.username = username;
         this.turnID = turnID;
+        this.wins = wins;
         this.turnArmies = 3;
         this.hasTurn = false;
-        this.lastThrow = null;
+
     }
 
     public PlayerModel(String username,  ArrayList<Integer> cards, Integer aantalLegers,
                        ArrayList lastThrow, Color color) {
         this.username = username;
-        this.lastThrow = lastThrow;
+
     }
 
 
@@ -97,13 +98,14 @@ public class PlayerModel{
         return turnID;
     }
 
-
-
-    public ArrayList<Integer> getLastThrow() {
-        return lastThrow;
+    public int getWins() {
+        return wins;
     }
 
-//    public void removeCountry(int lostCountry) {
+    public void setWins(int wins) {
+        wins = wins;
+    }
+    //    public void removeCountry(int lostCountry) {
 //        // give as parameter the country that the player lost
 //        this.lastThrow.remove(lostCountry);
 //    }

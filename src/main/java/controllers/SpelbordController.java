@@ -307,7 +307,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         nextTurn();
     }
 
-    public void rollDice(SpelbordView spelbordView) throws ExecutionException {
+    public void rollDice(SpelbordView spelbordView) throws ExecutionException{
         if (gameModel.getTurnID() == State.TurnID) {
             spelbordView.dobbelen();
             try {
@@ -317,8 +317,9 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                 e.printStackTrace();
             }
             DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
-            ApiFuture<WriteResult> future = docRef.update("attackThrow", worp1);
+            ApiFuture<WriteResult> future8 = docRef.update("attackThrow" , worp1);
             ApiFuture<WriteResult> future2 = docRef.update("defendThrow", worp2);
+
 
             int attackThrow1 = worp1.get(0);
             int defendThrow1 = worp2.get(0);
@@ -330,15 +331,22 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                 spelbordView.attackerWins(attackThrow1, attackThrow2);
                  ApiFuture<WriteResult> future3 = docRef.update("State",
                     FieldValue.arrayUnion("De aanvaller wint met een " + attackThrow1 + " en een " + attackThrow2));
+                try {
+                    setWin();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
             } else if (defendThrow1 >= attackThrow1 && defendThrow2 >= attackThrow2) {
                 spelbordView.defenderWins(defendThrow1, defendThrow2);
                 ApiFuture<WriteResult> future4 = docRef.update("State",
-                        FieldValue.arrayUnion("De verdediger wint met een " + defendThrow1 + " en een " + defendThrow2));
+                    FieldValue.arrayUnion("De verdediger wint met een " + defendThrow1 + " en een " + defendThrow2));
+
             } else {
                 spelbordView.draw();
                 ApiFuture<WriteResult> future4 = docRef.update("State",
-                        FieldValue.arrayUnion("Het is gelijkspel, niemand wint"));
-                return;
+                     FieldValue.arrayUnion("Het is gelijkspel, niemand wint"));
+
             }
         }else {
             spelbordView.notYourTurn();
@@ -346,14 +354,19 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
 
 
 
-
-
-
-
-
     }
 
+    public void setWin() throws ExecutionException, InterruptedException {
+        DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
+        ApiFuture<DocumentSnapshot> future = docRef.get();
+        DocumentSnapshot document = future.get();
 
+        Long wins = ((Number) document.get("wins0")).longValue();
+
+        System.out.println("aantal wins is: " + wins);
+        ApiFuture<WriteResult> win = docRef.update("wins" + turnID,  wins + 2);
+
+    }
 
     public void registerObserver(SpelbordObserver sbv) {
         spelbordModel.register(sbv);

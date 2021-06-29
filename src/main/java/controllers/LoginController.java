@@ -38,7 +38,7 @@ public class LoginController implements LobbyObservable {
     }
 
     public void createLobby(String username, String lobbycode) throws ExecutionException, InterruptedException {
-        PlayerModel playerModel1 = new PlayerModel(username, 1);
+        PlayerModel playerModel1 = new PlayerModel(username, 1, 0);
         State.TurnID = 1;
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(lobbycode).document("players");
 
@@ -49,8 +49,11 @@ public class LoginController implements LobbyObservable {
         data.put("State", Arrays.asList("Spel gestart", "Speler 1 is aan de beurt"));
         data.put("attackThrow", Collections.emptyList());
         data.put("defendThrow", Collections.emptyList());
+        data.put("wins0",1);
+        data.put("wins1",0);
+        data.put("wins2",0);
+        data.put("wins3",0);
         ApiFuture<WriteResult> result = docRef.set(data);
-
         System.out.println("Update time : " + result.get().getUpdateTime());
     }
 
@@ -99,7 +102,7 @@ public class LoginController implements LobbyObservable {
 
         List<String> arrayValue = (List<String>) document.get("players");
         assert arrayValue != null;
-        PlayerModel playerModel2 = new PlayerModel(username, arrayValue.size() + 1);
+        PlayerModel playerModel2 = new PlayerModel(username, arrayValue.size() + 1, 1);
         playerModel2.setTurnID(arrayValue.size() + 1);
         State.TurnID = arrayValue.size() + 1;
         System.out.println("De stateturnid is: " + State.TurnID);//TODO: sout verwijderen
@@ -176,7 +179,7 @@ public class LoginController implements LobbyObservable {
 
         //TODO vergeet niet om de nummer terug naar 4 te zetten
         assert arrayValue != null;
-        if (arrayValue.size() == 2) {
+        if (arrayValue.size() == 1) {
             return true;
         } else {
             System.out.println("Er zijn niet genoeg mensen in de lobby"); //TODO: dit op het scherm displayen
