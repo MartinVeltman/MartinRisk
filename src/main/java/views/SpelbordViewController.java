@@ -32,6 +32,7 @@ public class SpelbordViewController{
 
     SpelbordController spelbordController = SpelbordController.getSpelbordControllerInstance();
     static SpelbordModel spelbordModel;
+    GameModel gameModel = new GameModel();
     //GameModel gameModel;
     //static SpelbordViewController spelbordViewController;
     LoginController loginController = new LoginController();
@@ -66,7 +67,7 @@ public class SpelbordViewController{
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setHue(0.2);
         cNA1.setEffect(colorAdjust);
-    }
+    }//TODO op deze manier proberen kleur aan country te geven
 
     public void rollDice() {
         new Thread(() -> {
@@ -80,15 +81,15 @@ public class SpelbordViewController{
 
     public void endTurn() throws ExecutionException, InterruptedException {
         spelbordController.endTurn();
+        stateField.setText("Speler: " + gameModel.getTurnID() + " Is nu aan de beurt");
     }
 
 
     public void displayAttack(String land) throws InterruptedException {
-        GameModel gameModel = new GameModel();
         stateField.setText(land+ " word aangevallen door speler: " + gameModel.getTurnID());
     }
+
     public void cantAttack(){
-        GameModel gameModel = new GameModel();
         stateField.setText(" speler: " + gameModel.getTurnID() + " probeert zijn eigen land aan te vallen HAHA");
     }
     public void dobbelen(){
@@ -122,6 +123,8 @@ public class SpelbordViewController{
             stateField.setText("Je bent niet aan de beurt");
         });
     }
+
+
 
 
 

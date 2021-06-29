@@ -102,7 +102,7 @@ public class SpelbordModel implements SpelbordObservable {
                     count = 1;
                 }
                 newCountry.setPlayerID(count);
-                System.out.println("de getter van player is: " + newCountry.getPlayerID()); //uncomment als je beter wilt begrijpen
+               // System.out.println("de getter van player is: " + newCountry.getPlayerID()); //uncomment als je beter wilt begrijpen
                 countriesAndID.add(newCountry);
                 count++;
             }

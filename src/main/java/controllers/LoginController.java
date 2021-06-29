@@ -164,8 +164,7 @@ public class LoginController implements LobbyObservable {
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
         ApiFuture<WriteResult> future = docRef.update("gameIsRunning", true);
 
-        WriteResult result = future.get();
-        System.out.println("Write result: " + result);
+
     }
 
     public boolean enoughPlayers() throws ExecutionException, InterruptedException {

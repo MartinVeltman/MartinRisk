@@ -243,6 +243,10 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             gameModel.setTurnID(1);
             nextTurnIDFirebase();
         }
+        DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
+        ApiFuture<WriteResult> future = docRef.update("State",
+                FieldValue.arrayUnion("Speler: " + gameModel.getTurnID() + " is nu aan de beurt"));
+
     }
 
 
@@ -257,14 +261,12 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             if (validCountryCheck(buttonid.getId())) {
                 DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
                 ApiFuture<WriteResult> future = docRef.update("State",
-                        FieldValue.arrayUnion("er word aangevallen door speler: " + gameModel.getTurnID())); //stuurt de gameState naar firebase voor observers
+                        FieldValue.arrayUnion(buttonid.getId()+" word aangevallen door speler: " + gameModel.getTurnID())); //stuurt de gameState naar firebase voor observers
                 WriteResult result = future.get();
-                System.out.println("Write result: " + result);
                 spelbordViewController.displayAttack(buttonid.getId());
 
 
             } else if (!validCountryCheck(buttonid.getId())) {
-                System.out.println("je kan niet aanvallen");
                 spelbordViewController.cantAttack();
             }
         }else {
@@ -282,14 +284,12 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             ArrayList<HashMap> arrayCountryData = (ArrayList<HashMap>) document.get("countries");
 
             for (HashMap armyAndCountryID : arrayCountryData) {
-                //System.out.println("armyAndCountryID"+ armyAndCountryID);
+
                 if (armyAndCountryID.containsValue(country)) {
                     int firebasePlayerID = Integer.valueOf(armyAndCountryID.get("playerID").toString());
                     if (firebasePlayerID == State.TurnID) {
-                        System.out.println("Je kan je eigen land niet aanvallen");
                         return false;
                     } else {
-                        System.out.println("Dit is niet je land");
                         return true;
                     }
 
@@ -335,8 +335,8 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             if (attackThrow1 > defendThrow1 && attackThrow2 > defendThrow2) {
                 //hier iets van spelers.get(1).setSoldaten(soldaten-2)
                 spelbordViewController.attackerWins(attackThrow1, attackThrow2);
-//                ApiFuture<WriteResult> future = docRef.update("State",
-//                        FieldValue.arrayUnion("er word aangevallen door speler: " + gameModel.getTurnID()));
+//                 ApiFuture<WriteResult> future3 = docRef.update("State",
+//                    FieldValue.arrayUnion("er word aangevallen door speler: " + gameModel.getTurnID()));
             } else if (defendThrow1 >= attackThrow1 && defendThrow2 >= attackThrow2) {
                 spelbordViewController.defenderWins(defendThrow1, defendThrow2);
 
