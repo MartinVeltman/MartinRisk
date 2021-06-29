@@ -13,7 +13,7 @@ import models.GameModel;
 import models.SpelbordModel;
 import java.util.concurrent.ExecutionException;
 
-public class SpelbordViewController{
+public class SpelbordView {
 
     @FXML
     public static ImageView endTurnIcon;

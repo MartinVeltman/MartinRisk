@@ -6,24 +6,17 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.WriteResult;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import models.DiceModel;
 import models.GameModel;
-import models.PlayerModel;
 import models.SpelbordModel;
 import observers.SpelbordObservable;
 import observers.SpelbordObserver;
-import views.SpelbordViewController;
+import views.SpelbordView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -254,7 +247,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     public void attackPlayer(String countryCodeAttacker, String countryCodeDefender) {
     }
 
-    public void getButtonID(SpelbordViewController spelbordViewController, ActionEvent event) throws ExecutionException, InterruptedException{
+    public void getButtonID(SpelbordView spelbordView, ActionEvent event) throws ExecutionException, InterruptedException{
         Button buttonid = (Button) event.getSource();
         validCountryCheck(buttonid.getId());
         if (gameModel.getTurnID() == State.TurnID) {
@@ -263,14 +256,14 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                 ApiFuture<WriteResult> future = docRef.update("State",
                         FieldValue.arrayUnion(buttonid.getId()+" word aangevallen door speler: " + gameModel.getTurnID())); //stuurt de gameState naar firebase voor observers
                 WriteResult result = future.get();
-                spelbordViewController.displayAttack(buttonid.getId());
+                spelbordView.displayAttack(buttonid.getId());
 
 
             } else if (!validCountryCheck(buttonid.getId())) {
-                spelbordViewController.cantAttack();
+                spelbordView.cantAttack();
             }
         }else {
-            spelbordViewController.notYourTurn();
+            spelbordView.notYourTurn();
         }
     }
 
@@ -314,9 +307,9 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         nextTurn();
     }
 
-    public void rollDice(SpelbordViewController spelbordViewController) throws ExecutionException {
+    public void rollDice(SpelbordView spelbordView) throws ExecutionException {
         if (gameModel.getTurnID() == State.TurnID) {
-            spelbordViewController.dobbelen();
+            spelbordView.dobbelen();
             try {
 
                 TimeUnit.SECONDS.sleep(5);
@@ -334,21 +327,21 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
 
             if (attackThrow1 > defendThrow1 && attackThrow2 > defendThrow2) {
                 //hier iets van spelers.get(1).setSoldaten(soldaten-2)
-                spelbordViewController.attackerWins(attackThrow1, attackThrow2);
+                spelbordView.attackerWins(attackThrow1, attackThrow2);
                  ApiFuture<WriteResult> future3 = docRef.update("State",
                     FieldValue.arrayUnion("De aanvaller wint met een " + attackThrow1 + " en een " + attackThrow2));
             } else if (defendThrow1 >= attackThrow1 && defendThrow2 >= attackThrow2) {
-                spelbordViewController.defenderWins(defendThrow1, defendThrow2);
+                spelbordView.defenderWins(defendThrow1, defendThrow2);
                 ApiFuture<WriteResult> future4 = docRef.update("State",
                         FieldValue.arrayUnion("De verdediger wint met een " + defendThrow1 + " en een " + defendThrow2));
             } else {
-                spelbordViewController.draw();
+                spelbordView.draw();
                 ApiFuture<WriteResult> future4 = docRef.update("State",
                         FieldValue.arrayUnion("Het is gelijkspel, niemand wint"));
                 return;
             }
         }else {
-            spelbordViewController.notYourTurn();
+            spelbordView.notYourTurn();
         }
 
 
