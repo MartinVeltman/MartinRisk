@@ -239,11 +239,9 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         } else if (gameModel.getTurnID() < 4) {
             gameModel.setTurnID(gameModel.getTurnID() + 1);
             nextTurnIDFirebase();
-//            map.turnInProgress(map.getPlayers(), new GameModel(gameModel.getTurnID()));
         } else if (gameModel.getTurnID() == 4) {
             gameModel.setTurnID(1);
             nextTurnIDFirebase();
-//            map.turnInProgress(map.getPlayers(), new GameModel(gameModel.getTurnID()));
         }
     }
 

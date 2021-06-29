@@ -15,7 +15,7 @@ import java.io.*;
 
 public class Database {
 
-    private static final String PRIVATEKEYLOCATION = "C:\\Users\\Martin Veltman\\Downloads\\niewe-f7dc6-firebase-adminsdk-afalt-d50b0555bd.json";
+    private static final String PRIVATEKEYLOCATION = "src/main/resources/json/niewe-f7dc6-firebase-adminsdk-afalt-d50b0555bd.json";
     private static final String DATABASEURL = "niewe-f7dc6.iam.gserviceaccount.com";
     private Firestore db;
 
