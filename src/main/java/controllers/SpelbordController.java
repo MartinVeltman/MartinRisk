@@ -335,13 +335,16 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             if (attackThrow1 > defendThrow1 && attackThrow2 > defendThrow2) {
                 //hier iets van spelers.get(1).setSoldaten(soldaten-2)
                 spelbordViewController.attackerWins(attackThrow1, attackThrow2);
-//                 ApiFuture<WriteResult> future3 = docRef.update("State",
-//                    FieldValue.arrayUnion("er word aangevallen door speler: " + gameModel.getTurnID()));
+                 ApiFuture<WriteResult> future3 = docRef.update("State",
+                    FieldValue.arrayUnion("De aanvaller wint met een " + attackThrow1 + " en een " + attackThrow2));
             } else if (defendThrow1 >= attackThrow1 && defendThrow2 >= attackThrow2) {
                 spelbordViewController.defenderWins(defendThrow1, defendThrow2);
-
+                ApiFuture<WriteResult> future4 = docRef.update("State",
+                        FieldValue.arrayUnion("De verdediger wint met een " + defendThrow1 + " en een " + defendThrow2));
             } else {
                 spelbordViewController.draw();
+                ApiFuture<WriteResult> future4 = docRef.update("State",
+                        FieldValue.arrayUnion("Het is gelijkspel, niemand wint"));
                 return;
             }
         }else {
