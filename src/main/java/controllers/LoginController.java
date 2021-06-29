@@ -49,10 +49,10 @@ public class LoginController implements LobbyObservable {
         data.put("State", Arrays.asList("Spel gestart", "Speler 1 is aan de beurt"));
         data.put("attackThrow", Collections.emptyList());
         data.put("defendThrow", Collections.emptyList());
-        data.put("wins0",1);
         data.put("wins1",0);
         data.put("wins2",0);
         data.put("wins3",0);
+        data.put("wins4",0);
         ApiFuture<WriteResult> result = docRef.set(data);
         System.out.println("Update time : " + result.get().getUpdateTime());
     }
@@ -179,7 +179,7 @@ public class LoginController implements LobbyObservable {
 
         //TODO vergeet niet om de nummer terug naar 4 te zetten
         assert arrayValue != null;
-        if (arrayValue.size() == 1) {
+        if (arrayValue.size() == 2) {
             return true;
         } else {
             System.out.println("Er zijn niet genoeg mensen in de lobby"); //TODO: dit op het scherm displayen

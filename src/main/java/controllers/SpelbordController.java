@@ -331,11 +331,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                 spelbordView.attackerWins(attackThrow1, attackThrow2);
                  ApiFuture<WriteResult> future3 = docRef.update("State",
                     FieldValue.arrayUnion("De aanvaller wint met een " + attackThrow1 + " en een " + attackThrow2));
-                try {
-                    setWin();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
 
             } else if (defendThrow1 >= attackThrow1 && defendThrow2 >= attackThrow2) {
                 spelbordView.defenderWins(defendThrow1, defendThrow2);
@@ -351,6 +347,11 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         }else {
             spelbordView.notYourTurn();
         }
+        try {
+            setWin();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
 
 
@@ -361,10 +362,8 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         ApiFuture<DocumentSnapshot> future = docRef.get();
         DocumentSnapshot document = future.get();
 
-        Long wins = ((Number) document.get("wins0")).longValue();
-
-        System.out.println("aantal wins is: " + wins);
-        ApiFuture<WriteResult> win = docRef.update("wins" + turnID,  wins + 2);
+        Long wins = ((Number) document.get("wins" + gameModel.getTurnID())).longValue();
+        ApiFuture<WriteResult> win = docRef.update("wins" + gameModel.getTurnID(),  wins + 1);
 
     }
 
