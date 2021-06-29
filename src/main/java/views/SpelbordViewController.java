@@ -81,6 +81,8 @@ public class SpelbordViewController{
     public void endTurn() throws ExecutionException, InterruptedException {
         spelbordController.endTurn();
     }
+
+
     public void displayAttack(String land) throws InterruptedException {
         GameModel gameModel = new GameModel();
         stateField.setText(land+ " word aangevallen door speler: " + gameModel.getTurnID());
@@ -110,11 +112,15 @@ public class SpelbordViewController{
     }
 
     public void draw(){
-        stateField.setText("het is gelijkspel makkers");
+        Platform.runLater(() -> {
+            stateField.setText("het is gelijkspel makkers");
+        });
     }
 
     public void notYourTurn(){
-        stateField.setText("Je bent niet aan de beurt");
+        Platform.runLater(() -> {
+            stateField.setText("Je bent niet aan de beurt");
+        });
     }
 
 

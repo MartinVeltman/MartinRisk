@@ -194,7 +194,6 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
 
         if (canEnd) {
             int toUpdate;
-            //get benodigde stuff van firestore
             DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
 
             // haal de info van doc players op
@@ -234,19 +233,17 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     }
 
     //TODO matchen met code hierboven
-    public void nextTurn() {
+    public void nextTurn() throws ExecutionException, InterruptedException {
         if (gameModel.isGameOver() == true) {
             //end game. this should be called by an observer?
         } else if (gameModel.getTurnID() < 4) {
             gameModel.setTurnID(gameModel.getTurnID() + 1);
-            // roept de volgende turn aan
-            //nextTurnIDFirebase(lobbycode);
-            map.turnInProgress(map.getPlayers(), new GameModel(gameModel.getTurnID()));
+            nextTurnIDFirebase();
+//            map.turnInProgress(map.getPlayers(), new GameModel(gameModel.getTurnID()));
         } else if (gameModel.getTurnID() == 4) {
             gameModel.setTurnID(1);
-            // roept de volgende turn aan
-            //nextTurnIDFirebase(lobbycode);
-            map.turnInProgress(map.getPlayers(), new GameModel(gameModel.getTurnID()));
+            nextTurnIDFirebase();
+//            map.turnInProgress(map.getPlayers(), new GameModel(gameModel.getTurnID()));
         }
     }
 
@@ -315,6 +312,9 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     public void showPlayers() {
         System.out.println("showplayer");
     }
+    public void endTurn() throws ExecutionException, InterruptedException {
+        nextTurn();
+    }
 
     public void rollDice(SpelbordViewController spelbordViewController) throws ExecutionException {
         if (gameModel.getTurnID() == State.TurnID) {
@@ -359,9 +359,6 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
 
     }
 
-    public void endTurn() throws ExecutionException, InterruptedException {
-        nextTurnIDFirebase();
-    }
 
 
     public void registerObserver(SpelbordObserver sbv) {
@@ -378,9 +375,6 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
 
         System.out.println("update statefield observerss");
         ArrayList<HashMap> arrayStateData = (ArrayList<HashMap>) sb.get("State");
-
-
-
 
 
     }
