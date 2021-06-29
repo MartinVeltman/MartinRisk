@@ -1,27 +1,17 @@
 package views;
 
-import application.State;
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
+
 import controllers.LoginController;
 import controllers.SpelbordController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import models.GameModel;
 import models.SpelbordModel;
-import observers.SpelbordObservable;
-import observers.SpelbordObserver;
-
-import java.awt.*;
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 public class SpelbordViewController{
 
@@ -119,10 +109,12 @@ public class SpelbordViewController{
         });
     }
 
-
-
     public void draw(){
         stateField.setText("het is gelijkspel makkers");
+    }
+
+    public void notYourTurn(){
+        stateField.setText("Je bent niet aan de beurt");
     }
 
 

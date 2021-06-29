@@ -6,16 +6,24 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.WriteResult;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import models.DiceModel;
 import models.GameModel;
+import models.PlayerModel;
 import models.SpelbordModel;
 import observers.SpelbordObservable;
 import observers.SpelbordObserver;
 import views.SpelbordViewController;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +37,8 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     static SpelbordModel spelbordModel;
     private SpelbordModel map;
     private boolean canEnd;
+    private int turnID;
+    private boolean gameOver;
     static SpelbordController spelbordController;
     public boolean canAttack = false;
 //    SpelbordViewController spelbordViewController;
@@ -47,6 +57,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     public static SpelbordController getSpelbordControllerInstance() {
         if (spelbordController == null) {
             spelbordController = new SpelbordController();
+            System.out.println("nieuwe instantie van SpelbordController is aangemaakt");
         }
         return spelbordController;
     }
@@ -56,6 +67,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     public static GameModel getGameModelInstance() {
         if (gameModel == null) {
             gameModel = new GameModel(1);
+            System.out.println("nieuwe instantie van GameModel is aangemaakt");
         }
         return gameModel;
     }
@@ -244,30 +256,28 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     }
 
     public void getButtonID(SpelbordViewController spelbordViewController, ActionEvent event) throws ExecutionException, InterruptedException{
-        System.out.println("clickedAAAAAAAAAA!!!");
         Button buttonid = (Button) event.getSource();
-
-        System.out.println("country:"+ buttonid.getId());
         validCountryCheck(buttonid.getId());
-        if(validCountryCheck(buttonid.getId()) == true) {
-            DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
-            ApiFuture<WriteResult> future = docRef.update("State",
-                    FieldValue.arrayUnion("er word aangevallen door speler: " + gameModel.getTurnID())); //stuurt de gameState naar firebase voor observers
-            WriteResult result = future.get();
-            System.out.println("Write result: " + result);
-            spelbordViewController.displayAttack(buttonid.getId());
+        if (gameModel.getTurnID() == State.TurnID) {
+            if (validCountryCheck(buttonid.getId())) {
+                DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
+                ApiFuture<WriteResult> future = docRef.update("State",
+                        FieldValue.arrayUnion("er word aangevallen door speler: " + gameModel.getTurnID())); //stuurt de gameState naar firebase voor observers
+                WriteResult result = future.get();
+                System.out.println("Write result: " + result);
+                spelbordViewController.displayAttack(buttonid.getId());
 
 
-        }else if(validCountryCheck(buttonid.getId()) == false){
-            System.out.println("je kan niet aanvallen");
-            spelbordViewController.cantAttack();
+            } else if (!validCountryCheck(buttonid.getId())) {
+                System.out.println("je kan niet aanvallen");
+                spelbordViewController.cantAttack();
+            }
+        }else {
+            spelbordViewController.notYourTurn();
         }
-
-//       notifyAll();
-
-
-
     }
+
+
     public boolean validCountryCheck(String country) throws ExecutionException, InterruptedException {
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
         ApiFuture<DocumentSnapshot> future = docRef.get();
@@ -307,36 +317,37 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     }
 
     public void rollDice(SpelbordViewController spelbordViewController) throws ExecutionException {
-        spelbordViewController.dobbelen();
-        try {
+        if (gameModel.getTurnID() == State.TurnID) {
+            spelbordViewController.dobbelen();
+            try {
 
-            TimeUnit.SECONDS.sleep(5);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
-        ApiFuture<WriteResult> future = docRef.update("attackThrow", worp1);
-        ApiFuture<WriteResult> future2 = docRef.update("defendThrow", worp2);
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
+            ApiFuture<WriteResult> future = docRef.update("attackThrow", worp1);
+            ApiFuture<WriteResult> future2 = docRef.update("defendThrow", worp2);
 
-        int attackThrow1 = worp1.get(0);
-        int defendThrow1 = worp2.get(0);
-        int attackThrow2 = worp1.get(1);
-        int defendThrow2 = worp2.get(1);
+            int attackThrow1 = worp1.get(0);
+            int defendThrow1 = worp2.get(0);
+            int attackThrow2 = worp1.get(1);
+            int defendThrow2 = worp2.get(1);
 
-        if (attackThrow1 > defendThrow1 && attackThrow2 > defendThrow2){
-            System.out.println("speler 1 wint");//hier iets van spelers.get(1).setSoldaten(soldaten-2)
-            spelbordViewController.attackerWins(attackThrow1, attackThrow2);
+            if (attackThrow1 > defendThrow1 && attackThrow2 > defendThrow2) {
+                //hier iets van spelers.get(1).setSoldaten(soldaten-2)
+                spelbordViewController.attackerWins(attackThrow1, attackThrow2);
 //                ApiFuture<WriteResult> future = docRef.update("State",
 //                        FieldValue.arrayUnion("er word aangevallen door speler: " + gameModel.getTurnID()));
-        } else if(defendThrow1 >= attackThrow1 && defendThrow2 >= attackThrow2 ) {
-            System.out.println("2 wint");
-            spelbordViewController.defenderWins(defendThrow1, defendThrow2);
+            } else if (defendThrow1 >= attackThrow1 && defendThrow2 >= attackThrow2) {
+                spelbordViewController.defenderWins(defendThrow1, defendThrow2);
 
+            } else {
+                spelbordViewController.draw();
+                return;
+            }
         }else {
-            System.out.println("gelijkspel allebij een pion weg");
-            System.out.println("STOP");
-            spelbordViewController.draw();
-            return;
+            spelbordViewController.notYourTurn();
         }
 
 
