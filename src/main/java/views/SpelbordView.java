@@ -97,10 +97,6 @@ public class SpelbordView {
     }
 
 
-    public void displayAttack(String land) throws InterruptedException {
-        stateField.setText(land+ " word aangevallen door speler: " + gameModel.getTurnID());
-    }
-
     public void cantAttack(){
         stateField.setText("Je kan je eigen land niet aanvallen dat is zelfmoord");
     }
@@ -110,25 +106,7 @@ public class SpelbordView {
         });
 
     }
-    public void attackerWins(Integer steen1, Integer steen2){
-        Platform.runLater(() -> {
-            stateField.setText("De aanvaller wint met een " + steen1 + " en een " + steen2);
-        });
-    }
 
-    public void defenderWins(Integer steen1, Integer steen2){
-        Platform.runLater(() -> {
-            stateField.setText("De verdediger wint met een " + steen1 + " en een " + steen2);
-
-
-        });
-    }
-
-    public void draw(){
-        Platform.runLater(() -> {
-            stateField.setText("het is gelijkspel makkers");
-        });
-    }
 
     public void notYourTurn(){
         Platform.runLater(() -> {

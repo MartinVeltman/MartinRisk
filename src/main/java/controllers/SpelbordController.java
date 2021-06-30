@@ -109,6 +109,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         spelbordModel = spelbordModel.getSpelbordModelInstance();
         attachlistener();
         attachStateListener();
+        attachWinListener();
     }
 
     public void setArmyAndCountryInFirebase() throws ExecutionException, InterruptedException {
@@ -275,6 +276,29 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
 //                }
             }
         });
+    }
+
+    public void attachWinListener() {
+
+        DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
+        docRef.addSnapshotListener((documentSnapshot, e) -> {
+            if (view == null) {
+                return;
+            }
+            if (documentSnapshot != null) {
+                Long winAmount = ((Number) documentSnapshot.getData().get("wins"+gameModel.getTurnID())).longValue();
+                System.out.println("winAmount: " + winAmount);
+                if (winAmount == 10) {
+                    displayWinaar();
+                }
+
+            }
+        });
+    }
+    public void displayWinaar(){
+        DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
+        ApiFuture<WriteResult> future = docRef.update("State",
+                FieldValue.arrayUnion("Speler " + gameModel.getTurnID() + " heeft het spel gewonnen!#"));
     }
 
 
