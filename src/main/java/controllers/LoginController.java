@@ -120,7 +120,7 @@ public class LoginController implements LobbyObservable {
 
         ApiFuture<WriteResult> arrayUnion = docRef.update("players", FieldValue.arrayUnion(playerModel2));
         notifyAllObservers();
-        System.out.println("Update time : " + arrayUnion.get().getUpdateTime());
+
     }
 
     public boolean checkJoin(String username, String code) {
@@ -179,7 +179,7 @@ public class LoginController implements LobbyObservable {
 
         //TODO vergeet niet om de nummer terug naar 4 te zetten
         assert arrayValue != null;
-        if (arrayValue.size() == 2) {
+        if (arrayValue.size() == 4) {
             return true;
         } else {
             System.out.println("Er zijn niet genoeg mensen in de lobby"); //TODO: dit op het scherm displayen

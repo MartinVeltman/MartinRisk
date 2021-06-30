@@ -16,14 +16,13 @@ import models.SpelbordModel;
 import observers.SpelbordObservable;
 import observers.SpelbordObserver;
 import views.SpelbordView;
-
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class SpelbordController implements SpelbordObserver, UpdatableController {
 
-
+    private int dataBaseInt = 0;
     static GameModel gameModel;
     static SpelbordModel spelbordModel;
     private SpelbordModel map;
@@ -41,8 +40,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     //gameModel = loginController.getGameModelInstance();
 //    LoginController loginController = new LoginController();
 
-    ArrayList<Integer> worp1 = new DiceModel().roll(3);
-    ArrayList<Integer> worp2 = new DiceModel().roll(3);
+
     private SpelbordView view;
 
 
@@ -128,7 +126,6 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             //    CountryModel countryModel1 = new CountryModel("NA1");
 
             ApiFuture<WriteResult> result = docRef.update(data);
-
             System.out.println("iets gedaan met countries naar database");
         }
     }
@@ -223,18 +220,27 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
 
     //TODO matchen met code hierboven
     public void nextTurn() throws ExecutionException, InterruptedException {
-        if (gameModel.isGameOver() == true) {
+        System.out.println(gameModel.getTurnID());
+        System.out.println(gameModel.isGameOver());
+       if (gameModel.isGameOver()) {
             //end game. this should be called by an observer?
-        } else if (gameModel.getTurnID() < 4) {
+            return;
+        }
+
+        if (gameModel.getTurnID() < 4) {
             gameModel.setTurnID(gameModel.getTurnID() + 1);
             nextTurnIDFirebase();
         } else if (gameModel.getTurnID() == 4) {
             gameModel.setTurnID(1);
             nextTurnIDFirebase();
         }
+
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
+
+
         ApiFuture<WriteResult> future = docRef.update("State",
-                FieldValue.arrayUnion("Speler: " + gameModel.getTurnID() + " is nu aan de beurt"));
+                FieldValue.arrayUnion("Speler: " + gameModel.getTurnID() + " is nu aan de beurt#" +State.TurnID+ dataBaseInt));
+        dataBaseInt += 1;
 
     }
 
@@ -248,15 +254,13 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
         docRef.addSnapshotListener((documentSnapshot, e) -> {
             if (view == null) {
-
                 return;
             }
             if (documentSnapshot != null) {
                 ArrayList<String> stateList = (ArrayList<String>) documentSnapshot.getData().get("State");
                 String latestStateText = stateList.get(stateList.size()-1);
-                view.setStateText(latestStateText);
-
-
+                String displayedText = latestStateText.substring(0, latestStateText.indexOf("#"));
+                view.setStateText(displayedText);
 
 //                System.out.println(State.TurnID);
 //                int firebaseTurnID = Integer.valueOf(documentSnapshot.getData().get("gamestateTurnID").toString());
@@ -276,15 +280,19 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
 
 
     public void getButtonID(SpelbordView spelbordView, ActionEvent event) throws ExecutionException, InterruptedException{
+        DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
+        System.out.println("method: getButtonID");
         Button buttonid = (Button) event.getSource();
         validCountryCheck(buttonid.getId());
         if (gameModel.getTurnID() == State.TurnID) {
             if (validCountryCheck(buttonid.getId())) {
-                DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
+                System.out.println("method: getButtonID in de if");
                 ApiFuture<WriteResult> future = docRef.update("State",
-                        FieldValue.arrayUnion(buttonid.getId()+" word aangevallen door speler: " + gameModel.getTurnID())); //stuurt de gameState naar firebase voor observers
-                WriteResult result = future.get();
-                spelbordView.displayAttack(buttonid.getId());
+                        FieldValue.arrayUnion(buttonid.getId()+" word aangevallen door speler: " + gameModel.getTurnID()+"#"+State.TurnID+ dataBaseInt));
+                dataBaseInt += 1;
+                //stuurt de gameState naar firebase voor observers
+              //  WriteResult result = future.get();
+               // spelbordView.displayAttack(buttonid.getId());
 
 
             } else if (!validCountryCheck(buttonid.getId())) {
@@ -332,15 +340,19 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         System.out.println("showplayer");
     }
     public void endTurn() throws ExecutionException, InterruptedException {
+        System.out.println("method: endTurn");
         nextTurn();
     }
 
     public void rollDice(SpelbordView spelbordView) throws ExecutionException{
+        System.out.println("method: rollDice");
+        ArrayList<Integer> worp1 = new DiceModel().roll(3);
+        ArrayList<Integer> worp2 = new DiceModel().roll(3);
         if (gameModel.getTurnID() == State.TurnID) {
             spelbordView.dobbelen();
             try {
 
-                TimeUnit.SECONDS.sleep(5);
+                TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -348,40 +360,38 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             ApiFuture<WriteResult> future8 = docRef.update("attackThrow" , worp1);
             ApiFuture<WriteResult> future2 = docRef.update("defendThrow", worp2);
 
-
             int attackThrow1 = worp1.get(0);
             int defendThrow1 = worp2.get(0);
             int attackThrow2 = worp1.get(1);
             int defendThrow2 = worp2.get(1);
 
             if (attackThrow1 > defendThrow1 && attackThrow2 > defendThrow2) {
-                //hier iets van spelers.get(1).setSoldaten(soldaten-2)
-                spelbordView.attackerWins(attackThrow1, attackThrow2);
+               // spelbordView.attackerWins(attackThrow1, attackThrow2);
                  ApiFuture<WriteResult> future3 = docRef.update("State",
-                    FieldValue.arrayUnion("De aanvaller wint met een " + attackThrow1 + " en een " + attackThrow2));
-
-
+                    FieldValue.arrayUnion("De aanvaller wint met een " + attackThrow1 + " en een " + attackThrow2 + "#" + State.TurnID + dataBaseInt));
+                try {
+                    setWin();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("method: rollDice aanvaller");
             } else if (defendThrow1 >= attackThrow1 && defendThrow2 >= attackThrow2) {
-                spelbordView.defenderWins(defendThrow1, defendThrow2);
+                //spelbordView.defenderWins(defendThrow1, defendThrow2);
                 ApiFuture<WriteResult> future4 = docRef.update("State",
-                    FieldValue.arrayUnion("De verdediger wint met een " + defendThrow1 + " en een " + defendThrow2));
+                    FieldValue.arrayUnion("De verdediger wint met een " + defendThrow1 + " en een " + defendThrow2 + "#" + State.TurnID + dataBaseInt));
+
 
             } else {
-                spelbordView.draw();
+               // spelbordView.draw();
                 ApiFuture<WriteResult> future4 = docRef.update("State",
-                     FieldValue.arrayUnion("Het is gelijkspel, niemand wint"));
+                     FieldValue.arrayUnion("Het is gelijkspel, niemand wint#" +State.TurnID+ dataBaseInt));
+
 
             }
+            dataBaseInt += 1;
         }else {
             spelbordView.notYourTurn();
         }
-        try {
-            setWin();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
 
     }
 

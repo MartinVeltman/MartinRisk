@@ -16,7 +16,6 @@ public class DiceModel {
 
 
         public ArrayList<Integer> roll(int numberOfDice) {
-
             diceArray = new ArrayList<>();
 
             for(int i = 0; i < numberOfDice; i++) {
