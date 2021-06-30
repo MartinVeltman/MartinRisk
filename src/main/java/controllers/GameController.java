@@ -16,16 +16,12 @@ public class GameController {
     public GameController() {
         Database db = Database.getInstance();
         Firestore firestore = db.getFirestoreDatabase();
-
         this.colRef = firestore.collection(State.lobbycode);
-
-
 
     }
 
     public void listen(String documentId, LobbyObserver observer) {            //luisterd of er een wijziging is binnen het firebasedocument als dat zo is geeft ie aan
         DocumentReference docRef = this.colRef.document(documentId);           //de observer een nieuw documentsnapshot mee
-
         docRef.addSnapshotListener((DocumentSnapshot snapshot, FirestoreException e) -> {
                 if (e != null) {
                   logger.log(Level.INFO, "Gooit firestoreExption info", e);

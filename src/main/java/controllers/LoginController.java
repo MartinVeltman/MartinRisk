@@ -4,31 +4,14 @@ import application.State;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import models.PlayerModel;
-import models.SpelbordModel;
 import observers.LobbyObservable;
 import observers.LobbyObserver;
-
-
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class LoginController implements LobbyObservable {
 
-    static SpelbordModel spelbordModel;
     private static final List<LobbyObserver> observers = new ArrayList<>();
-
-
-//    public LoginController getLoginControllerInstance() {
-//        if (loginController == null) {
-//            loginController = new LoginController();
-//            System.out.println("nieuwe instantie van Logincontroller is aangemaakt");
-//        }
-//        return loginController;
-//    } singelton Logincontroller wss niet nodig dan weghalen
-
-    public void testMessage(String username) {
-
-    }
 
     public String createLobbyCode() {
         int min = 100000;
@@ -53,7 +36,7 @@ public class LoginController implements LobbyObservable {
         data.put("wins2",0);
         data.put("wins3",0);
         data.put("wins4",0);
-        ApiFuture<WriteResult> result = docRef.set(data);
+        docRef.set(data);
 
     }
 
@@ -81,8 +64,6 @@ public class LoginController implements LobbyObservable {
         if (document.exists()) {
             List<String> arrayValue = (List<String>) document.get("players");
             assert arrayValue != null;
-
-
             if (arrayValue.size() < 4) {
                 return true;
             } else {
@@ -106,18 +87,17 @@ public class LoginController implements LobbyObservable {
         playerModel2.setTurnID(arrayValue.size() + 1);
         State.TurnID = arrayValue.size() + 1;
 
-
         return playerModel2;
     }
 
     public void joinLobby(String lobbycode, String username) throws ExecutionException, InterruptedException {
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(lobbycode).document("players");
         ApiFuture<DocumentSnapshot> future = docRef.get();
-        DocumentSnapshot document = future.get();
+        future.get();
         State.lobbycode = lobbycode;
         PlayerModel playerModel2 = generateInstance(username, lobbycode);
 
-        ApiFuture<WriteResult> arrayUnion = docRef.update("players", FieldValue.arrayUnion(playerModel2));
+        docRef.update("players", FieldValue.arrayUnion(playerModel2));
         notifyAllObservers();
 
     }
@@ -161,11 +141,9 @@ public class LoginController implements LobbyObservable {
         }
     }
 
-    public void gameRunning() throws ExecutionException, InterruptedException {
+    public void gameRunning(){
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
-        ApiFuture<WriteResult> future = docRef.update("gameIsRunning", true);
-
-
+        docRef.update("gameIsRunning", true);
     }
 
     public boolean enoughPlayers() throws ExecutionException, InterruptedException {
@@ -174,10 +152,9 @@ public class LoginController implements LobbyObservable {
         DocumentSnapshot document = future.get();
 
         List<String> arrayValue = (List<String>) document.get("players");
-
         //TODO vergeet niet om de nummer terug naar 4 te zetten
         assert arrayValue != null;
-        if (arrayValue.size() == 4) {
+        if (arrayValue.size() == 2) {
             return true;
         } else {
             System.out.println("Er zijn niet genoeg mensen in de lobby"); //TODO: dit op het scherm displayen
@@ -185,35 +162,17 @@ public class LoginController implements LobbyObservable {
         }
     }
 
-    public void allPlayers(String lobbycode) throws ExecutionException, InterruptedException {
-        DocumentReference docRef = State.database.getFirestoreDatabase().collection(lobbycode).document("players");
-        ApiFuture<DocumentSnapshot> future = docRef.get();
-        DocumentSnapshot document = future.get();
-
-        //TODO net als bij logincontrol.generateInstance een instantie maken voor spelbordModel met de arrayvalue van hier en countries.
-
-        if (document.exists()) {
-            ArrayList<PlayerModel> arrayValue = (ArrayList<PlayerModel>) document.get("players");
-//            System.out.println(arrayValue);
-            spelbordModel.setPlayers(arrayValue);
-        }
-    }
-
 
     @Override
     public void register(LobbyObserver observer) {
         observers.add(observer);
-
     }
 
     @Override
     public void notifyAllObservers() {
         for (LobbyObserver b : observers) {
-
             b.update(this);
-
         }
-
     }
 
 }

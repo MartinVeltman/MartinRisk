@@ -107,10 +107,8 @@ public class LobbyController implements LobbyObserver, UpdatableController{
 
     @FXML
     public void initialize() throws ExecutionException, InterruptedException {
-
         GameController gameController = new GameController();
         gameController.listen("players", this);
-
         registerObserver(this);
         attachlistener();
 
@@ -164,15 +162,13 @@ public class LobbyController implements LobbyObserver, UpdatableController{
 
     @Override
     public void updateDocument(DocumentSnapshot lb) {     //hier word de list voor elke speler geupdate
-        ArrayList<HashMap> arrayPlayerData = (ArrayList<HashMap>) lb.get("players"); //zet alle data van 'players' in array wat hashmaps bevatten
+        ArrayList<HashMap<String, String>> arrayPlayerData = (ArrayList<HashMap<String, String>>) lb.get("players"); //zet alle data van 'players' in array wat hashmaps bevatten
         List<String> mijnUsernamesList = new ArrayList<>();
 
         assert arrayPlayerData != null;
-        for (HashMap playerData : arrayPlayerData) {
-            mijnUsernamesList.add((String) playerData.get("username"));//loopt door de arrays van firestore zodat je ze apart kan zien van elke player
+        for (HashMap<String, String> playerData : arrayPlayerData) {
+            mijnUsernamesList.add(playerData.get("username"));//loopt door de arrays van firestore zodat je ze apart kan zien van elke player
         }
-
-
         if (username1 == null) {
             return;
         }
