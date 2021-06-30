@@ -37,6 +37,11 @@ public class SpelbordView {
     //static SpelbordViewController spelbordViewController;
     LoginController loginController = new LoginController();
 
+    @FXML
+    public void initialize() {
+        spelbordController.setView(this);
+    }
+
 //    public static SpelbordViewController getSpelbordViewControllerInstance() {
 //        if (spelbordViewController == null) {
 //            spelbordViewController = new SpelbordViewController();
@@ -82,6 +87,12 @@ public class SpelbordView {
     public void endTurn() throws ExecutionException, InterruptedException {
         spelbordController.endTurn();
         stateField.setText("Speler: " + gameModel.getTurnID() + " Is nu aan de beurt");
+    }
+
+    public void setStateText(String text) {
+        Platform.runLater(() -> {
+            stateField.setText(text);
+        });
     }
 
 

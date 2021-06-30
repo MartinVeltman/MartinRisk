@@ -17,9 +17,7 @@ import observers.SpelbordObservable;
 import observers.SpelbordObserver;
 import views.SpelbordView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +43,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
 
     ArrayList<Integer> worp1 = new DiceModel().roll(3);
     ArrayList<Integer> worp2 = new DiceModel().roll(3);
+    private SpelbordView view;
 
 
     public static SpelbordController getSpelbordControllerInstance() {
@@ -71,12 +70,8 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
         docRef.addSnapshotListener((documentSnapshot, e) -> {
             if (documentSnapshot != null) {
-                System.out.println(documentSnapshot.getData().get("gamestateTurnID"));
-                System.out.println(State.TurnID);
                 int firebaseTurnID = Integer.valueOf(documentSnapshot.getData().get("gamestateTurnID").toString());
-                System.out.println("hij is niet gezet");
                 gameModel.setTurnID(firebaseTurnID);
-                System.out.println("hij is gezet");
                 try {
                     startMainLoop();
                 } catch (ExecutionException executionException) {
@@ -116,6 +111,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         gameModel = getGameModelInstance();
         spelbordModel = spelbordModel.getSpelbordModelInstance();
         attachlistener();
+        attachStateListener();
     }
 
     public void setArmyAndCountryInFirebase() throws ExecutionException, InterruptedException {
@@ -246,6 +242,38 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     //Todo zorg ervoor dat via de map de 2 countryID's worden meegegeven
     public void attackPlayer(String countryCodeAttacker, String countryCodeDefender) {
     }
+
+
+    public void attachStateListener() {
+        DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
+        docRef.addSnapshotListener((documentSnapshot, e) -> {
+            if (view == null) {
+
+                return;
+            }
+            if (documentSnapshot != null) {
+                ArrayList<String> stateList = (ArrayList<String>) documentSnapshot.getData().get("State");
+                String latestStateText = stateList.get(stateList.size()-1);
+                view.setStateText(latestStateText);
+
+
+
+//                System.out.println(State.TurnID);
+//                int firebaseTurnID = Integer.valueOf(documentSnapshot.getData().get("gamestateTurnID").toString());
+//                System.out.println("hij is niet gezet");
+//                gameModel.setTurnID(firebaseTurnID);
+//                System.out.println("hij is gezet");
+//                try {
+//                    startMainLoop();
+//                } catch (ExecutionException executionException) {
+//                    executionException.printStackTrace();
+//                } catch (InterruptedException interruptedException) {
+//                    interruptedException.printStackTrace();
+//                }
+            }
+        });
+    }
+
 
     public void getButtonID(SpelbordView spelbordView, ActionEvent event) throws ExecutionException, InterruptedException{
         Button buttonid = (Button) event.getSource();
@@ -388,6 +416,10 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     @Override
     public void update(DocumentSnapshot documentSnapshot) {
 
+    }
+
+    public void setView(SpelbordView view) {
+        this.view = view;
     }
 
 

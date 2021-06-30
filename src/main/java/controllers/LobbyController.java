@@ -16,10 +16,7 @@ import javafx.stage.Stage;
 import observers.LobbyObservable;
 import observers.LobbyObserver;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class LobbyController implements LobbyObserver, UpdatableController{
@@ -143,13 +140,14 @@ public class LobbyController implements LobbyObserver, UpdatableController{
         ApiFuture<DocumentSnapshot> future = docRef.get();
         DocumentSnapshot document = future.get();
 
+
         ArrayList<String> myUsernameList = new ArrayList<>();
         if (document.exists()) {
-            ArrayList<HashMap> arrayPlayerData = (ArrayList<HashMap>) document.get("players"); //zet alle data van 'players' in array wat hashmaps bevatten
+            ArrayList<HashMap<String, String>> arrayPlayerData = (ArrayList<HashMap<String, String>>) document.get("players"); //zet alle data van 'players' in array wat hashmaps bevatten
 
             assert arrayPlayerData != null;
-            for (HashMap playerData : arrayPlayerData) {
-                myUsernameList.add((String) playerData.get("username"));//loopt door de arrays van firestore zodat je ze apart kan zien van elke player
+            for (HashMap<String, String> playerData : arrayPlayerData) {
+                myUsernameList.add(playerData.get("username"));//loopt door de arrays van firestore zodat je ze apart kan zien van elke player
             }
         }
 
