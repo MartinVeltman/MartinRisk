@@ -1,6 +1,7 @@
 package views;
 
 
+import application.State;
 import controllers.LoginController;
 import controllers.SpelbordController;
 import javafx.application.Platform;
@@ -101,7 +102,7 @@ public class SpelbordView {
     }
 
     public void cantAttack(){
-        stateField.setText(" speler: " + gameModel.getTurnID() + " probeert zijn eigen land aan te vallen HAHA");
+        stateField.setText("Je kan je eigen land niet aanvallen dat is zelfmoord");
     }
     public void dobbelen(){
         Platform.runLater(() -> {

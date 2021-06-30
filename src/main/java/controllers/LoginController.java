@@ -179,7 +179,7 @@ public class LoginController implements LobbyObservable {
 
         //TODO vergeet niet om de nummer terug naar 4 te zetten
         assert arrayValue != null;
-        if (arrayValue.size() == 4) {
+        if (arrayValue.size() == 1) {
             return true;
         } else {
             System.out.println("Er zijn niet genoeg mensen in de lobby"); //TODO: dit op het scherm displayen

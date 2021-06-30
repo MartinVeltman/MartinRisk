@@ -89,7 +89,6 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             canEnd = true;
             //TODO hier komt de zetten en aanvallen van de game. Als laatst nextTurn()
 
-
             //ToDo zorg ervoor dat hier een mouse event listeren
 
             //functie viewer.garrison(current playerID)
