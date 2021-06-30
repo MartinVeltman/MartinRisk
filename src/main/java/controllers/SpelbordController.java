@@ -25,22 +25,8 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     private int dataBaseInt = 0;
     static GameModel gameModel;
     static SpelbordModel spelbordModel;
-    private SpelbordModel map;
     private boolean canEnd;
-    private int turnID;
-    private boolean gameOver;
     static SpelbordController spelbordController;
-    public boolean canAttack = false;
-//    SpelbordViewController spelbordViewController;
-//
-//    public SpelbordViewController getSpelbordViewController() {
-//        return spelbordViewController;
-//    }
-    // SpelbordViewController spelbordViewController = SpelbordViewController.getSpelbordViewControllerInstance();
-    //gameModel = loginController.getGameModelInstance();
-//    LoginController loginController = new LoginController();
-
-
     private SpelbordView view;
 
 
@@ -68,14 +54,12 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
         docRef.addSnapshotListener((documentSnapshot, e) -> {
             if (documentSnapshot != null) {
-                int firebaseTurnID = Integer.valueOf(documentSnapshot.getData().get("gamestateTurnID").toString());
+                int firebaseTurnID = Integer.parseInt(Objects.requireNonNull(documentSnapshot.getData()).get("gamestateTurnID").toString());
                 gameModel.setTurnID(firebaseTurnID);
                 try {
                     startMainLoop();
-                } catch (ExecutionException executionException) {
+                } catch (ExecutionException | InterruptedException executionException) {
                     executionException.printStackTrace();
-                } catch (InterruptedException interruptedException) {
-                    interruptedException.printStackTrace();
                 }
             }
         });
@@ -86,24 +70,14 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         if (gameModel.getTurnID() == State.TurnID) {
             State.stage.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
             canEnd = true;
-            //TODO hier komt de zetten en aanvallen van de game. Als laatst nextTurn()
-
-            //ToDo zorg ervoor dat hier een mouse event listeren
-
-            //functie viewer.garrison(current playerID)
-
-
         } else {
             canEnd = false;
         }
-        this.getArmyAndCountryFromFirebase();
-
-
     }
 
     public SpelbordController() {
         gameModel = getGameModelInstance();
-        spelbordModel = spelbordModel.getSpelbordModelInstance();
+        spelbordModel = SpelbordModel.getSpelbordModelInstance();
         attachlistener();
         attachStateListener();
         attachWinListener();
@@ -120,55 +94,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             Map<String, Object> data = new HashMap<>();
             data.put("countries", spelbordModel.getCountries());
 
-            //    CountryModel countryModel1 = new CountryModel("NA1");
-
-            ApiFuture<WriteResult> result = docRef.update(data);
-
-        }
-    }
-
-    public void getArmyAndCountryFromFirebase() throws ExecutionException, InterruptedException {
-        DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
-        ApiFuture<DocumentSnapshot> future = docRef.get();
-        DocumentSnapshot document = future.get();
-        if (document.exists()) {
-
-            ArrayList<HashMap> arrayCountryData = (ArrayList<HashMap>) document.get("countries");
-            for (HashMap armyAndCountryID : arrayCountryData) {
-                //   ApiFuture<WriteResult> result = docRef.update("countries", armyAndCountryID);
-                //   System.out.println("pernoot:" +result.get());
-
-            }
-        } else {
-
-        }
-
-
-    }
-
-    //if the player turnID matches the gamestate turnID. then he can start his turn
-    public void getPlayersFirebaseTurnID() throws ExecutionException, InterruptedException {
-
-        //get benodigde stuff van firestore
-        DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
-        ApiFuture<DocumentSnapshot> future = docRef.get();
-        DocumentSnapshot document = future.get();
-
-        //if lobbycode/collection van players bestaat ->
-        if (document.exists()) {
-
-            ArrayList<HashMap> arrayPlayerData = (ArrayList<HashMap>) document.get("players"); //zet alle data van 'players' in array wat hashmaps bevatten
-
-            for (HashMap playerData : arrayPlayerData) {
-                System.out.println(playerData);  //loopt door de arrays van firestore zodat je ze apart kan zien van elke player
-
-                Map.Entry<String, Long> entry = (Map.Entry<String, Long>) playerData.entrySet().iterator().next(); //elke
-                String turnIdKey = entry.getKey(); //pakt de key van elke 1e Key-Value combo
-                Long turnIdValue = entry.getValue(); //pakt de bijbehorende value van die 1e key
-                System.out.println(turnIdKey + " = " + turnIdValue); //print beide key en value
-            }
-        } else {
-            System.out.println("No document found!");
+            docRef.update(data);
 
         }
     }
@@ -178,49 +104,24 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         if (canEnd) {
             int toUpdate;
             DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
-
             // haal de info van doc players op
             ApiFuture<DocumentSnapshot> future = docRef.get();
             DocumentSnapshot document = future.get();
-
             // haal de info van gamestateTurnID op
-            Object stringID = document.get("gamestateTurnID").toString();
-
+            Object stringID = Objects.requireNonNull(document.get("gamestateTurnID")).toString();
             // maak toUpdate een int die gelijk staat aan de turnID uit firebase
             toUpdate = Integer.parseInt(stringID.toString());
-
             // als de stringID gelijk is aan 4 dan wordt de value naar 1 gezet. anders wordt toUpdate + 1 gebruikt
             if (stringID.equals("4")) {
-                ApiFuture<WriteResult> GamestateID = docRef.update("gamestateTurnID", 1);
+                docRef.update("gamestateTurnID", 1);
             } else {
-                ApiFuture<WriteResult> GamestateID = docRef.update("gamestateTurnID", toUpdate + 1);
+                docRef.update("gamestateTurnID", toUpdate + 1);
             }
         }
     }
 
-
-//    TODO zorg ervoor dat de lokale playerID wordt aangesproken hier als playerLocalID, maybe met final String?
-
-    public long comparePlayerIDtoTurnIDFirebase(String playerLocalID) throws ExecutionException, InterruptedException {
-        DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
-        ApiFuture<DocumentSnapshot> future = docRef.get();
-        DocumentSnapshot document = future.get();
-
-        if (playerLocalID.equals(document.get("gamestateTurnID").toString())) {
-            System.out.println("this is your turn!");
-        } else {
-            System.out.println("nah fam, not your turn");
-        }
-
-        return (long) document.getData().get("gamestateTurnID");
-    }
-
-    //TODO matchen met code hierboven
     public void nextTurn() throws ExecutionException, InterruptedException {
-        System.out.println(gameModel.getTurnID());
-        System.out.println(gameModel.isGameOver());
        if (gameModel.isGameOver()) {
-            //end game. this should be called by an observer?
             return;
         }
 
@@ -233,19 +134,11 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         }
 
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
-
-
-        ApiFuture<WriteResult> future = docRef.update("State",
+        docRef.update("State",
                 FieldValue.arrayUnion("Speler: " + gameModel.getTurnID() + " is nu aan de beurt#" +State.TurnID+ dataBaseInt));
         dataBaseInt += 1;
 
     }
-
-
-    //Todo zorg ervoor dat via de map de 2 countryID's worden meegegeven
-    public void attackPlayer(String countryCodeAttacker, String countryCodeDefender) {
-    }
-
 
     public void attachStateListener() {
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
@@ -254,7 +147,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                 return;
             }
             if (documentSnapshot != null) {
-                ArrayList<String> stateList = (ArrayList<String>) documentSnapshot.getData().get("State");
+                ArrayList<String> stateList = (ArrayList<String>) Objects.requireNonNull(documentSnapshot.getData()).get("State");
                 String latestStateText = stateList.get(stateList.size()-1);
                 String displayedText = latestStateText.substring(0, latestStateText.indexOf("#"));
                 view.setStateText(displayedText);
@@ -283,12 +176,11 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                 return;
             }
             if (documentSnapshot != null) {
-                Long winAmount = ((Number) documentSnapshot.getData().get("wins"+gameModel.getTurnID())).longValue();
+                long winAmount = ((Number) documentSnapshot.getData().get("wins"+gameModel.getTurnID())).longValue();
                 System.out.println("winAmount: " + winAmount);
                 if (winAmount == 10) {
                     displayWinaar();
                 }
-
             }
         });
     }
