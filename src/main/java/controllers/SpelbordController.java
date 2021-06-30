@@ -47,7 +47,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     public static SpelbordController getSpelbordControllerInstance() {
         if (spelbordController == null) {
             spelbordController = new SpelbordController();
-            System.out.println("nieuwe instantie van SpelbordController is aangemaakt");
+
         }
         return spelbordController;
     }
@@ -57,7 +57,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     public static GameModel getGameModelInstance() {
         if (gameModel == null) {
             gameModel = new GameModel(1);
-            System.out.println("nieuwe instantie van GameModel is aangemaakt");
+
         }
         return gameModel;
     }
@@ -84,7 +84,6 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     public void startMainLoop() throws ExecutionException, InterruptedException {
 
         if (gameModel.getTurnID() == State.TurnID) {
-            System.out.println("Jij bent aan de beurt " + gameModel.getTurnID());
             State.stage.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
             canEnd = true;
             //TODO hier komt de zetten en aanvallen van de game. Als laatst nextTurn()
@@ -95,10 +94,8 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
 
 
         } else {
-            System.out.println("Je bent niet aan de beurt, TurnID " + gameModel.getTurnID() + " is aan de beurt");
             canEnd = false;
         }
-        System.out.println("main loop gestart");
         this.getArmyAndCountryFromFirebase();
 
 
@@ -117,7 +114,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         ApiFuture<DocumentSnapshot> future = docRef.get();
         DocumentSnapshot document = future.get();
         if (document.get("countries") != null) {
-            System.out.println("this shit is already made");
+            System.out.println("this shit is already made");//TODO; log dit
         } else {
             spelbordModel.CountriesAndIdMap();
             Map<String, Object> data = new HashMap<>();
@@ -126,7 +123,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             //    CountryModel countryModel1 = new CountryModel("NA1");
 
             ApiFuture<WriteResult> result = docRef.update(data);
-            System.out.println("iets gedaan met countries naar database");
+
         }
     }
 
@@ -143,7 +140,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
 
             }
         } else {
-            System.out.println("No document found! aids");
+
         }
 
 

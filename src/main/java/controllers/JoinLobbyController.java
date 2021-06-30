@@ -25,12 +25,11 @@ public class JoinLobbyController {
 
 
     public JoinLobbyController(){
-        System.out.println("I am joinlobby alive");
         playerModel = PlayerModel.getPlayerModelInstance();
     }
 
     public void switchToInsertLobbycode(ActionEvent event) throws IOException{
-        System.out.println("Ingevulde lobbycode is: " + codeField.getText());
+
 
         if (loginController.validateLobby(codeField.getText())) {
 

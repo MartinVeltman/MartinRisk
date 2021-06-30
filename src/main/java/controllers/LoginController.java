@@ -27,7 +27,7 @@ public class LoginController implements LobbyObservable {
 //    } singelton Logincontroller wss niet nodig dan weghalen
 
     public void testMessage(String username) {
-        System.out.println("de username is: " + username);
+
     }
 
     public String createLobbyCode() {
@@ -54,7 +54,7 @@ public class LoginController implements LobbyObservable {
         data.put("wins3",0);
         data.put("wins4",0);
         ApiFuture<WriteResult> result = docRef.set(data);
-        System.out.println("Update time : " + result.get().getUpdateTime());
+
     }
 
     public void checkCreate(String username) {
@@ -81,7 +81,7 @@ public class LoginController implements LobbyObservable {
         if (document.exists()) {
             List<String> arrayValue = (List<String>) document.get("players");
             assert arrayValue != null;
-            System.out.println(arrayValue.size());
+
 
             if (arrayValue.size() < 4) {
                 return true;
@@ -105,7 +105,7 @@ public class LoginController implements LobbyObservable {
         PlayerModel playerModel2 = new PlayerModel(username, arrayValue.size() + 1, 1);
         playerModel2.setTurnID(arrayValue.size() + 1);
         State.TurnID = arrayValue.size() + 1;
-        System.out.println("De stateturnid is: " + State.TurnID);//TODO: sout verwijderen
+
 
         return playerModel2;
     }
@@ -114,7 +114,6 @@ public class LoginController implements LobbyObservable {
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(lobbycode).document("players");
         ApiFuture<DocumentSnapshot> future = docRef.get();
         DocumentSnapshot document = future.get();
-        System.out.println(document.get("players"));
         State.lobbycode = lobbycode;
         PlayerModel playerModel2 = generateInstance(username, lobbycode);
 
@@ -125,7 +124,6 @@ public class LoginController implements LobbyObservable {
 
     public boolean checkJoin(String username, String code) {
         if (username.equals("")) {
-            System.out.println("Username is leeg");
             return false;
         } else {
             try {
@@ -136,7 +134,7 @@ public class LoginController implements LobbyObservable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
-                System.out.println("Lobby not found");
+
                 return false;
             }
         }
@@ -155,7 +153,7 @@ public class LoginController implements LobbyObservable {
             char[] charArray = code.toCharArray();
             for (char ch : charArray) {
                 if (ch >= 'a' && ch <= 'z') {
-                    System.out.println("Ingevulde lobbycode bevat letters");
+                    System.out.println("Ingevulde lobbycode bevat letters"); //TODO; displayen
                     return false;
                 }
             }
@@ -179,7 +177,7 @@ public class LoginController implements LobbyObservable {
 
         //TODO vergeet niet om de nummer terug naar 4 te zetten
         assert arrayValue != null;
-        if (arrayValue.size() == 1) {
+        if (arrayValue.size() == 4) {
             return true;
         } else {
             System.out.println("Er zijn niet genoeg mensen in de lobby"); //TODO: dit op het scherm displayen
@@ -210,9 +208,8 @@ public class LoginController implements LobbyObservable {
 
     @Override
     public void notifyAllObservers() {
-        System.out.println("Test notifyobservers");
         for (LobbyObserver b : observers) {
-            System.out.println("notifyoneobserver11");
+
             b.update(this);
 
         }
