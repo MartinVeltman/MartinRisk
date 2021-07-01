@@ -5,7 +5,6 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.FieldValue;
-import com.google.cloud.firestore.WriteResult;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -95,7 +94,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             data.put("countries", spelbordModel.getCountries());
 
             docRef.update(data);
-            ApiFuture<WriteResult> result = docRef.update(data);
+            docRef.update(data);
 
         }
     }
@@ -166,6 +165,12 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                 long winAmount = ((Number) Objects.requireNonNull(documentSnapshot.getData()).get("wins"+gameModel.getTurnID())).longValue();
                 if (winAmount == 10) {
                     displayWinaar();
+                    try {
+                        TimeUnit.SECONDS.sleep(20);
+                        System.exit(0);
+                    } catch (InterruptedException interruptedException) {
+                        interruptedException.printStackTrace();
+                    }
                 }
             }
         });
@@ -238,7 +243,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             spelbordView.dobbelen();
             try {
 
-                TimeUnit.SECONDS.sleep(3);
+                TimeUnit.SECONDS.sleep(4);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
