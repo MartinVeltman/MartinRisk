@@ -1,7 +1,6 @@
 package views;
 
 
-import application.State;
 import controllers.LoginController;
 import controllers.SpelbordController;
 import javafx.application.Platform;
@@ -57,7 +56,7 @@ public class SpelbordView {
 
 
     public void getButtonID(ActionEvent event) throws ExecutionException, InterruptedException{
-        spelbordController.getButtonID(this, event);
+        spelbordController.attackCountry(this, event);
     }
 
     public void handleClicky() {
@@ -78,7 +77,7 @@ public class SpelbordView {
     public void rollDice() {
         new Thread(() -> {
             try {
-                spelbordController.rollDice(this);
+                spelbordController.rollDiceAttack(this);
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
