@@ -5,6 +5,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.FieldValue;
+import com.google.cloud.firestore.WriteResult;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -94,6 +95,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             data.put("countries", spelbordModel.getCountries());
 
             docRef.update(data);
+            ApiFuture<WriteResult> result = docRef.update(data);
 
         }
     }
@@ -120,7 +122,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     }
 
     public void nextTurn() throws ExecutionException, InterruptedException {
-       if (gameModel.isGameOver()) {
+        if (gameModel.isGameOver()) {
             return;
         }
 
@@ -199,13 +201,18 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         ApiFuture<DocumentSnapshot> future = docRef.get();
         DocumentSnapshot document = future.get();
         if (document.exists()) {
-            ArrayList<HashMap<String, Number>> arrayCountryData = (ArrayList<HashMap<String, Number>>) document.get("countries");
+            ArrayList<HashMap> arrayCountryData = (ArrayList<HashMap>) document.get("countries");
 
-            assert arrayCountryData != null;
-            for (HashMap<String, Number> armyAndCountryID : arrayCountryData) {
+            for (HashMap armyAndCountryID : arrayCountryData) {
+
                 if (armyAndCountryID.containsValue(country)) {
-                    int firebasePlayerID = Integer.parseInt(String.valueOf(armyAndCountryID.get("playerID")));
-                    return firebasePlayerID != State.TurnID;
+                    int firebasePlayerID = Integer.valueOf(armyAndCountryID.get("playerID").toString());
+                    if (firebasePlayerID == State.TurnID) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+
                 }
             }
         }
@@ -248,8 +255,8 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             int defendThrow2 = worp2.get(1);
 
             if (attackThrow1 > defendThrow1 && attackThrow2 > defendThrow2) {
-                 docRef.update("State", FieldValue.arrayUnion
-                         ("De aanvaller wint met een " + attackThrow1 + " en een " + attackThrow2 + "#" + State.TurnID + dataBaseInt));
+                docRef.update("State", FieldValue.arrayUnion
+                        ("De aanvaller wint met een " + attackThrow1 + " en een " + attackThrow2 + "#" + State.TurnID + dataBaseInt));
                 try {
                     setWin();
                 } catch (InterruptedException e) {
@@ -260,7 +267,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                         ("De verdediger wint met een " + defendThrow1 + " en een " + defendThrow2 + "#" + State.TurnID + dataBaseInt));
             } else {
                 docRef.update("State",
-                     FieldValue.arrayUnion("Het is gelijkspel, niemand wint#" +State.TurnID+ dataBaseInt));
+                        FieldValue.arrayUnion("Het is gelijkspel, niemand wint#" +State.TurnID+ dataBaseInt));
             }
             dataBaseInt += 1;
         } else {

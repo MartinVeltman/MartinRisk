@@ -2,7 +2,7 @@ package models;
 
 
 public class CountryModel {
-
+    //TODO; kijk uit voor je deze warnings weghaald eentje geeft rare error
     private int playerID;
     private final String countryID;
     private int army;
@@ -39,7 +39,7 @@ public class CountryModel {
         return this.countryID;
     }
 
-//    public String getCountryName(){
+    //    public String getCountryName(){
 //        return this.countryName;
 //    }
     public void setPlayerID(int playerID){

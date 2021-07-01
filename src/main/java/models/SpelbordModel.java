@@ -52,36 +52,8 @@ public class SpelbordModel implements SpelbordObservable {
     }
 
 
-    public void updateArmies(int playerIndex, int newArmies) {
-        //update to firebase here
 
-        // this updates the amount of armies a certain player has on a certain land
-        CountryModel chosenCountry = countries.get(playerIndex);
 
-        chosenCountry.setArmy(newArmies);
-
-        // give this updated army on the country to firebase
-
-    }
-
-    public void turnInProgress(ArrayList<PlayerModel> players, GameModel hostedGame){
-
-        for (int i = 0; i<players.size();i++){
-
-            if (players.get(i).getTurnID() == hostedGame.getTurnID()){
-
-                // now you have the player who has a turn
-                currentPlayer = players.get(i);
-
-                currentPlayer.buildPhase();
-                currentPlayer.attackPhase();
-                currentPlayer.endPhase();
-
-//                hostedGame.spelbordController.nextTurn();
-            }
-        }
-
-    }
 
     public void CountriesAndIdMap() {
         //EUROPE
