@@ -4,12 +4,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DiceModelTest {
+    DiceModel diceModel= new DiceModel();
 
-    public static boolean isSorted(ArrayList<Integer> arrayList) {
+    private static boolean isSorted(ArrayList<Integer> arrayList) {
         for (int i = 0; i < arrayList.size() - 1; i++) {
             if (arrayList.get(i) < arrayList.get(i + 1)) {
                 return false; // is dus niet sorted
@@ -19,8 +19,7 @@ class DiceModelTest {
     }
 
     @Test
-    public void should_sort_throw_array() {
-        DiceModel diceModel= new DiceModel();
+    public void shouldSortDiceArray() {
         ArrayList<Integer> notSortedThrow= new ArrayList<>();
         notSortedThrow.add(4);
         notSortedThrow.add(3);
@@ -35,6 +34,20 @@ class DiceModelTest {
         assertFalse(isSorted(notSortedThrow));
 
     }
+
+
+    @Test
+    public void checkAmountofDice(){
+        ArrayList<Integer> worp = diceModel.roll(10);
+        ArrayList<Integer> worp1 = diceModel.roll(1000);
+        ArrayList<Integer> worp2 = diceModel.roll(2);
+        assertEquals(10, worp.size());
+        assertEquals(1000, worp1.size());
+        assertEquals(2, worp2.size());
+        assertFalse(worp1.size() != 1000);
+
+    }
+
 
 
 
