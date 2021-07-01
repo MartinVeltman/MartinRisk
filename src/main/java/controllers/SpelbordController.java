@@ -203,15 +203,12 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         if (document.exists()) {
             ArrayList<HashMap> arrayCountryData = (ArrayList<HashMap>) document.get("countries");
 
+            assert arrayCountryData != null;
             for (HashMap armyAndCountryID : arrayCountryData) {
 
                 if (armyAndCountryID.containsValue(country)) {
-                    int firebasePlayerID = Integer.valueOf(armyAndCountryID.get("playerID").toString());
-                    if (firebasePlayerID == State.TurnID) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    int firebasePlayerID = Integer.parseInt(armyAndCountryID.get("playerID").toString());
+                    return firebasePlayerID != State.TurnID;
 
                 }
             }

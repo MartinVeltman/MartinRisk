@@ -16,24 +16,17 @@ import java.util.Objects;
 public class JoinLobbyController {
 
     LoginController loginController = new LoginController();
-
     PlayerModel playerModel;
 
     @FXML
     TextField codeField;
-
-
 
     public JoinLobbyController(){
         playerModel = PlayerModel.getPlayerModelInstance();
     }
 
     public void switchToInsertLobbycode(ActionEvent event) throws IOException{
-
-
         if (loginController.validateLobby(codeField.getText())) {
-
-
             if (loginController.checkJoin(playerModel.getUsername(), codeField.getText())){
                 Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("FXML/Lobby.fxml")));
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -43,7 +36,6 @@ public class JoinLobbyController {
             }
         } else {
            //TODO: moet in het scherm komen te staan= System.out.println("lobbycode is ongeldig, probeer het nog eens");
-
         }
     }
 

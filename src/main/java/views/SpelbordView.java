@@ -146,12 +146,5 @@ public class SpelbordView {
 //    }
 
 
-    public void garrison(){
-        //Todo catch mouseEvent
-        // catch clickedCountry
-        // Check if country has the same playerID as the player
-
-    }
-
 
 }

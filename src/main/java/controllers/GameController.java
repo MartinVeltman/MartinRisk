@@ -4,7 +4,6 @@ import application.State;
 import com.google.cloud.firestore.*;
 import configuration.Database;
 import observers.LobbyObserver;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

@@ -10,7 +10,6 @@ public class DiceModel {
 
         }
 
-
         public ArrayList<Integer> roll(int numberOfDice) {
             ArrayList<Integer> diceArray = new ArrayList<>();
 
@@ -19,15 +18,11 @@ public class DiceModel {
                 int roll = die.nextInt(6) + 1;
                 diceArray.add(roll);
             }
-
             Collections.sort(diceArray);
             Collections.reverse(diceArray);
 
             return diceArray;
         }
-
-
-
 
     }
 
