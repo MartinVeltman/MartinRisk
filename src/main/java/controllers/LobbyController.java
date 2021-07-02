@@ -18,12 +18,16 @@ import observers.LobbyObserver;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LobbyController implements LobbyObserver, UpdatableController{
 
     private Scene scene;
     private Parent root;
     boolean isInGame = false;
+    private final static Logger logger = Logger.getLogger(LobbyController.class.getName());
 
 
 
@@ -39,6 +43,8 @@ public class LobbyController implements LobbyObserver, UpdatableController{
     private Label username4;
     @FXML
     private Label lobbyCode;
+
+
 
 
 
@@ -77,7 +83,7 @@ public class LobbyController implements LobbyObserver, UpdatableController{
                 }
 
             } catch (ExecutionException | InterruptedException | IOException executionException) {
-                executionException.printStackTrace();//TODO: met logger
+                logger.log(Level.INFO, (Supplier<String>) executionException);
             }
 
         });
@@ -86,9 +92,7 @@ public class LobbyController implements LobbyObserver, UpdatableController{
     }
 
 
-    public LobbyController() {
 
-    }
 
     public void startGame(ActionEvent event) throws IOException, ExecutionException, InterruptedException {
 
@@ -115,7 +119,7 @@ public class LobbyController implements LobbyObserver, UpdatableController{
 //        lobbyView = new LobbyView();
         lobbyCode.setText(State.lobbycode);
 
-        if (getFirebaseUsernames(State.lobbycode).size() == 1) {
+        if (getFirebaseUsernames(State.lobbycode).size() == 1) { /// for loop username's in lijst zetten en ze displayen
             username1.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(0)));
         } else if (getFirebaseUsernames(State.lobbycode).size() == 2) {
             username1.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(0)));

@@ -12,8 +12,12 @@ import javafx.scene.image.ImageView;
 import models.GameModel;
 import models.SpelbordModel;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SpelbordView {
+
+    public Logger logger;
 
     @FXML
     public static ImageView endTurnIcon;
@@ -79,7 +83,7 @@ public class SpelbordView {
             try {
                 spelbordController.rollDiceAttack(this);
             } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
+                logger.log(Level.INFO, "gooit exption: ", e);
             }
         }).start();
     }

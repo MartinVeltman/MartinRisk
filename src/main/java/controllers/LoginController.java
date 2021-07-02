@@ -8,10 +8,17 @@ import observers.LobbyObservable;
 import observers.LobbyObserver;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LoginController implements LobbyObservable {
 
+    private final static Logger logger = Logger.getLogger(LoginController.class.getName());
+
     private static final List<LobbyObserver> observers = new ArrayList<>();
+
+    public LoginController() {
+    }
 
     public String createLobbyCode() {
         int min = 100000;
@@ -43,15 +50,15 @@ public class LoginController implements LobbyObservable {
     public void checkCreate(String username) {
         try {
             if (username.equals("")) {
-                System.out.println("Username is leeg");   //TODO: textfield "Username leeg" laten displayen
+                logger.log(Level.INFO, "Usernamefield is leeg");
             } else {
                 String lobbycode = createLobbyCode();
                 createLobby(username, lobbycode);
                 State.lobbycode = lobbycode;
-                System.out.println("De state lobbycode is " + State.lobbycode);
+                logger.log(Level.INFO, "Lobbycode is: " + State.lobbycode);
             }
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+                logger.log(Level.INFO, "gooit exption: ", e);
         }
     }
 
@@ -67,12 +74,12 @@ public class LoginController implements LobbyObservable {
             if (arrayValue.size() < 4) {
                 return true;
             } else {
-                System.out.println("De lobby is vol"); //TODO: usernamefield "lobby vol" laten displayen
+                logger.log(Level.INFO, "Lobby is al vol");
                 return false;
             }
         } else {
-            System.out.println("Lobby not found");//TODO: usernamefield "lobby bestaat niet" laten displayen
-            return false;
+                logger.log(Level.INFO, "Lobby bestaat niet");
+                return false;
         }
     }
 
@@ -112,7 +119,7 @@ public class LoginController implements LobbyObservable {
                     return true;
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.log(Level.INFO, "gooit exption: ", e);
             } catch (ExecutionException e) {
 
                 return false;
@@ -133,7 +140,7 @@ public class LoginController implements LobbyObservable {
             char[] charArray = code.toCharArray();
             for (char ch : charArray) {
                 if (ch >= 'a' && ch <= 'z') {
-                    System.out.println("Ingevulde lobbycode bevat letters"); //TODO; displayen
+                    logger.log(Level.INFO, "Ingevulde lobbycode bevat letters");
                     return false;
                 }
             }
@@ -152,12 +159,12 @@ public class LoginController implements LobbyObservable {
         DocumentSnapshot document = future.get();
 
         List<String> arrayValue = (List<String>) document.get("players");
-        //TODO vergeet niet om de nummer terug naar 4 te zetten
+
         assert arrayValue != null;
-        if (arrayValue.size() == 4) {
+        if (arrayValue.size() == 1) {
             return true;
         } else {
-            System.out.println("Er zijn niet genoeg mensen in de lobby"); //TODO: dit op het scherm displayen
+            logger.log(Level.INFO, "Er zijn teweing mensen in de lobby"); //TODO: dit op het scherm displayen
             return false;
         }
     }

@@ -26,34 +26,37 @@ public class PreLobbyController {
     public PreLobbyController(){
         playerModel = PlayerModel.getPlayerModelInstance();
     }
+    public void switchLobby(String name, ActionEvent event) throws IOException {
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource(name)));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+    }
+
+    public void displayUsernameEmpty(){
+        usernameField.setText("Give name");
+    }
 
 
     public void switchToCreatedLobby(ActionEvent event) throws IOException {
         playerModel.setUsername(usernameField.getText());
         if (loginController.emptyUsername(usernameField.getText())) {
-            System.out.println("Username is leeg"); //TODO: display dit
+           displayUsernameEmpty();
         } else {
             loginController.checkCreate(usernameField.getText());
-            root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("FXML/Lobby.fxml")));
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
+            switchLobby("FXML/Lobby.fxml", event);
         }
     }
 
     public void switchToJoinedLobby(ActionEvent event) throws IOException {
         playerModel.setUsername(usernameField.getText());
         if (loginController.emptyUsername(usernameField.getText())) {
-            System.out.println("Username is leeg");  //TODO: display dit
+            displayUsernameEmpty();
         } else {
             playerModel.setUsername(usernameField.getText());
-            System.out.println(playerModel.getUsername());
-            root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("FXML/JoinLobby.fxml")));
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
+            switchLobby("FXML/JoinLobby.fxml", event);
         }
     }
 }

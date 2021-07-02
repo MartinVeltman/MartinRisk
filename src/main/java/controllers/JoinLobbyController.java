@@ -35,7 +35,8 @@ public class JoinLobbyController {
                 stage.show();
             }
         } else {
-           //TODO: moet in het scherm komen te staan= System.out.println("lobbycode is ongeldig, probeer het nog eens");
+            codeField.setText("Code ongeldig");
+
         }
     }
 

@@ -18,6 +18,8 @@ import views.SpelbordView;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SpelbordController implements SpelbordObserver, UpdatableController {
 
@@ -28,6 +30,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     static SpelbordController spelbordController;
     private SpelbordView view;
     private int winInt = 0;
+    public Logger logger;
 
 
     public static SpelbordController getSpelbordControllerInstance() {
@@ -59,7 +62,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                 try {
                     startMainLoop();
                 } catch (ExecutionException | InterruptedException executionException) {
-                    executionException.printStackTrace();
+                    logger.log(Level.INFO, "gooit exption: ", executionException);
                 }
             }
         });
@@ -170,7 +173,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                         TimeUnit.SECONDS.sleep(20);
                         System.exit(0);
                     } catch (InterruptedException interruptedException) {
-                        interruptedException.printStackTrace();
+                        logger.log(Level.INFO, "gooit exption: ", interruptedException);
                     }
                 }
             }
@@ -251,7 +254,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
 
                 TimeUnit.SECONDS.sleep(4);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.log(Level.INFO, "gooit exption: ", e);
             }
             DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
             docRef.update("attackThrow" , worp1);
@@ -269,7 +272,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                     setWin();
                     TimeUnit.SECONDS.sleep(4);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.log(Level.INFO, "gooit exption: ", e);
                 }
                 spelbordView.attackAgain();
                 winInt = 1;

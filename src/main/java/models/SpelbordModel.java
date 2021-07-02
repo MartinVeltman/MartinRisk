@@ -5,10 +5,13 @@ import observers.SpelbordObserver;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class SpelbordModel implements SpelbordObservable {
 
+    public Logger logger;
     private ArrayList<CountryModel> countries;
     private final List<SpelbordObserver> observers = new ArrayList<>();
     static SpelbordModel spelbordModel;
@@ -45,8 +48,7 @@ public class SpelbordModel implements SpelbordObservable {
             }
             myReader.close();
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+            logger.log(Level.INFO, "gooit exception: ", e);
         }
         Collections.shuffle(countriesAndID);
         this.countries = countriesAndID;
