@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public class SpelbordModel implements SpelbordObservable {
 
-    public Logger logger;
+    private final static Logger logger = Logger.getLogger(SpelbordModel.class.getName());
     private ArrayList<CountryModel> countries;
     private final List<SpelbordObserver> observers = new ArrayList<>();
     static SpelbordModel spelbordModel;

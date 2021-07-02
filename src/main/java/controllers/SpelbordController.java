@@ -29,8 +29,9 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     private boolean canEnd;
     static SpelbordController spelbordController;
     private SpelbordView view;
+    private int selectCountry = 0;
     private int winInt = 0;
-    public Logger logger;
+    private final static Logger logger = Logger.getLogger(SpelbordController.class.getName());
 
 
     public static SpelbordController getSpelbordControllerInstance() {
@@ -194,7 +195,8 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                 docRef.update("State",
                         FieldValue.arrayUnion(buttonid.getId()+" word aangevallen door speler: " + gameModel.getTurnID()+"#"+State.TurnID+ dataBaseInt));
                 dataBaseInt += 1;
-
+                System.out.println("komt hieerrrrrrr");
+                selectCountry = 1;
             } else if (!validCountryCheck(buttonid.getId())) {
                 spelbordView.cantAttack();
             }
@@ -239,65 +241,70 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     }
 
     public void endTurn() throws ExecutionException, InterruptedException {
+        selectCountry = 0;
         winInt = 0;
         nextTurn();
     }
 
     public void rollDiceAttack(SpelbordView spelbordView) throws ExecutionException, InterruptedException {
+        if (selectCountry == 1) {
 
-        ArrayList<Integer> worp1 = new DiceModel().roll(3);
-        ArrayList<Integer> worp2 = new DiceModel().roll(3);
-        if (gameModel.getTurnID() == State.TurnID) {
-            spelbordView.dobbelen();
-            try {
-                TimeUnit.SECONDS.sleep(4);
-            } catch (InterruptedException e) {
-                logger.log(Level.INFO, "gooit exption: ", e);
-            }
-            DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
-            docRef.update("attackThrow" , worp1);
-            docRef.update("defendThrow", worp2);
-
-            int attackThrow1 = worp1.get(0);
-            int defendThrow1 = worp2.get(0);
-            int attackThrow2 = worp1.get(1);
-            int defendThrow2 = worp2.get(1);
-
-            if (attackThrow1 > defendThrow1 && attackThrow2 > defendThrow2) {
-                docRef.update("State", FieldValue.arrayUnion
-                        ("De aanvaller wint met een " + attackThrow1 + " en een " + attackThrow2 + "#" + State.TurnID + dataBaseInt));
+            ArrayList<Integer> worp1 = new DiceModel().roll(3);
+            ArrayList<Integer> worp2 = new DiceModel().roll(3);
+            if (gameModel.getTurnID() == State.TurnID) {
+                spelbordView.dobbelen();
                 try {
-                    setWin();
                     TimeUnit.SECONDS.sleep(4);
                 } catch (InterruptedException e) {
                     logger.log(Level.INFO, "gooit exption: ", e);
                 }
-                spelbordView.attackAgain();
-                winInt = 1;
+                DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
+                docRef.update("attackThrow", worp1);
+                docRef.update("defendThrow", worp2);
 
-            } else if (defendThrow1 >= attackThrow1 && defendThrow2 >= attackThrow2) {
+                int attackThrow1 = worp1.get(0);
+                int defendThrow1 = worp2.get(0);
+                int attackThrow2 = worp1.get(1);
+                int defendThrow2 = worp2.get(1);
 
-                docRef.update("State", FieldValue.arrayUnion
-                        ("De verdediger wint met een " + defendThrow1 + " en een " + defendThrow2 + "#" + State.TurnID + dataBaseInt));
-                TimeUnit.SECONDS.sleep(4);
-                spelbordView.turnEnds();
-                TimeUnit.SECONDS.sleep(2);
-                if(winInt == 1){
-                    lowerWin();
+                if (attackThrow1 > defendThrow1 && attackThrow2 > defendThrow2) {
+                    docRef.update("State", FieldValue.arrayUnion
+                            ("De aanvaller wint met een " + attackThrow1 + " en een " + attackThrow2 + "#" + State.TurnID + dataBaseInt));
+                    try {
+                        setWin();
+                        TimeUnit.SECONDS.sleep(4);
+                    } catch (InterruptedException e) {
+                        logger.log(Level.INFO, "gooit exption: ", e);
+                    }
+                    spelbordView.attackAgain();
+                    winInt = 1;
+
+                } else if (defendThrow1 >= attackThrow1 && defendThrow2 >= attackThrow2) {
+
+                    docRef.update("State", FieldValue.arrayUnion
+                            ("De verdediger wint met een " + defendThrow1 + " en een " + defendThrow2 + "#" + State.TurnID + dataBaseInt));
+                    TimeUnit.SECONDS.sleep(4);
+                    spelbordView.turnEnds();
+                    TimeUnit.SECONDS.sleep(2);
+                    if (winInt == 1) {
+                        lowerWin();
+                    }
+                    endTurn();
+
+                } else {
+                    docRef.update("State",
+                            FieldValue.arrayUnion("Het is gelijkspel, niemand wint#" + State.TurnID + dataBaseInt));
+                    TimeUnit.SECONDS.sleep(4);
+                    spelbordView.turnEnds();
+                    TimeUnit.SECONDS.sleep(2);
+                    endTurn();
                 }
-                endTurn();
-
+                dataBaseInt += 1;
             } else {
-                docRef.update("State",
-                        FieldValue.arrayUnion("Het is gelijkspel, niemand wint#" +State.TurnID+ dataBaseInt));
-                TimeUnit.SECONDS.sleep(4);
-                spelbordView.turnEnds();
-                TimeUnit.SECONDS.sleep(2);
-                endTurn();
+                spelbordView.notYourTurn();
             }
-            dataBaseInt += 1;
-        } else {
-            spelbordView.notYourTurn();
+        }else {
+            spelbordView.noCountrySelected();
         }
     }
 

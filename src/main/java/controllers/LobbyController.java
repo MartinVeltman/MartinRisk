@@ -85,10 +85,7 @@ public class LobbyController implements LobbyObserver, UpdatableController{
             } catch (ExecutionException | InterruptedException | IOException executionException) {
                 logger.log(Level.INFO, (Supplier<String>) executionException);
             }
-
         });
-
-
     }
 
 

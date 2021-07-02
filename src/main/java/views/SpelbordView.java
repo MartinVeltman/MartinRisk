@@ -99,6 +99,12 @@ public class SpelbordView {
         });
     }
 
+    public void noCountrySelected(){
+        Platform.runLater(() -> {
+            stateField.setText("Klik eerst op het land dat je wilt aanvallen");
+        });
+    }
+
     public void cantAttack(){
         stateField.setText("Je kan je eigen land niet aanvallen dat is zelfmoord");
     }
