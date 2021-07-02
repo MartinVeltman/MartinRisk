@@ -119,41 +119,8 @@ public class LobbyController implements LobbyObserver, UpdatableController{
 
 //        lobbyView = new LobbyView();
         lobbyCode.setText(State.lobbycode);
-        if (getFirebaseUsernames(State.lobbycode).size() >= 1) {
-            username1.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(0)));
-            System.out.println("komt ie hierin?");
-        }
-        if (getFirebaseUsernames(State.lobbycode).size() >= 2) {
-            username2.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(1)));
-        }
-        if (getFirebaseUsernames(State.lobbycode).size() >= 3) {
-            username3.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(2)));
-        }
-        if (getFirebaseUsernames(State.lobbycode).size() == 4) {
-            username4.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(3)));
-        }
+
     }
-
-
-    public ArrayList<String> getFirebaseUsernames(String lobbyCode) throws ExecutionException, InterruptedException {
-        DocumentReference docRef = State.database.getFirestoreDatabase().collection(lobbyCode).document("players");
-        ApiFuture<DocumentSnapshot> future = docRef.get();
-        DocumentSnapshot document = future.get();
-
-
-        ArrayList<String> myUsernameList = new ArrayList<>();
-        if (document.exists()) {
-            ArrayList<HashMap<String, String>> arrayPlayerData = (ArrayList<HashMap<String, String>>) document.get("players"); //zet alle data van 'players' in array wat hashmaps bevatten
-
-            assert arrayPlayerData != null;
-            for (HashMap<String, String> playerData : arrayPlayerData) {
-                myUsernameList.add(playerData.get("username"));//loopt door de arrays van firestore zodat je ze apart kan zien van elke player
-            }
-        }
-
-        return myUsernameList;
-    }
-
 
 
     @Override
