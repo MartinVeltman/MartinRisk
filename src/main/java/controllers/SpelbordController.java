@@ -166,10 +166,10 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             }
             if (documentSnapshot != null) {
                 long winAmount = ((Number) Objects.requireNonNull(documentSnapshot.getData()).get("wins"+gameModel.getTurnID())).longValue();
-                if (winAmount == 10) {
+                if (winAmount >= 10) {
                     displayWinner();
                     try {
-                        TimeUnit.SECONDS.sleep(20);
+                        TimeUnit.SECONDS.sleep(4);
                         System.exit(0);
                     } catch (InterruptedException interruptedException) {
                         logger.log(Level.INFO, "gooit exption: ", interruptedException);
