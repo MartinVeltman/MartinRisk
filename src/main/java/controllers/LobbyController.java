@@ -109,6 +109,7 @@ public class LobbyController implements LobbyObserver, UpdatableController{
     }
 
 
+
     @FXML
     public void initialize() throws ExecutionException, InterruptedException {
         GameController gameController = new GameController();
@@ -118,20 +119,17 @@ public class LobbyController implements LobbyObserver, UpdatableController{
 
 //        lobbyView = new LobbyView();
         lobbyCode.setText(State.lobbycode);
-
-        if (getFirebaseUsernames(State.lobbycode).size() == 1) { /// for loop username's in lijst zetten en ze displayen
+        if (getFirebaseUsernames(State.lobbycode).size() >= 1) {
             username1.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(0)));
-        } else if (getFirebaseUsernames(State.lobbycode).size() == 2) {
-            username1.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(0)));
+            System.out.println("komt ie hierin?");
+        }
+        if (getFirebaseUsernames(State.lobbycode).size() >= 2) {
             username2.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(1)));
-        } else if (getFirebaseUsernames(State.lobbycode).size() == 3) {
-            username1.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(0)));
-            username2.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(1)));
+        }
+        if (getFirebaseUsernames(State.lobbycode).size() >= 3) {
             username3.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(2)));
-        } else if (getFirebaseUsernames(State.lobbycode).size() == 4) {
-            username1.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(0)));
-            username2.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(1)));
-            username3.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(2)));
+        }
+        if (getFirebaseUsernames(State.lobbycode).size() == 4) {
             username4.setText(String.valueOf(getFirebaseUsernames(State.lobbycode).get(3)));
         }
     }
@@ -177,19 +175,14 @@ public class LobbyController implements LobbyObserver, UpdatableController{
             return;
         }
         Platform.runLater(() -> {  //hier word de nieuwe view voor elke speler verzonden
-            if (mijnUsernamesList.size() == 1) {
-                username1.setText(String.valueOf(mijnUsernamesList.get(0)));
-            } else if (mijnUsernamesList.size() == 2) {
-                username1.setText(String.valueOf(mijnUsernamesList.get(0)));
+            username1.setText(String.valueOf(mijnUsernamesList.get(0)));
+           if (mijnUsernamesList.size() >= 2) {
                 username2.setText(String.valueOf(mijnUsernamesList.get(1)));
-            } else if (mijnUsernamesList.size() == 3) {
-                username1.setText(String.valueOf(mijnUsernamesList.get(0)));
-                username2.setText(String.valueOf(mijnUsernamesList.get(1)));
+            }
+           if (mijnUsernamesList.size() >= 3) {
                 username3.setText(String.valueOf(mijnUsernamesList.get(2)));
-            } else if (mijnUsernamesList.size() == 4) {
-                username1.setText(String.valueOf(mijnUsernamesList.get(0)));
-                username2.setText(String.valueOf(mijnUsernamesList.get(1)));
-                username3.setText(String.valueOf(mijnUsernamesList.get(2)));
+            }
+           if (mijnUsernamesList.size() == 4) {
                 username4.setText(String.valueOf(mijnUsernamesList.get(3)));
             } });
         }

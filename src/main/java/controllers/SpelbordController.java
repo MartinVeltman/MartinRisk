@@ -36,7 +36,6 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     public static SpelbordController getSpelbordControllerInstance() {
         if (spelbordController == null) {
             spelbordController = new SpelbordController();
-
         }
         return spelbordController;
     }
@@ -46,7 +45,6 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     public static GameModel getGameModelInstance() {
         if (gameModel == null) {
             gameModel = new GameModel(1);
-
         }
         return gameModel;
     }
@@ -91,7 +89,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         ApiFuture<DocumentSnapshot> future = docRef.get();
         DocumentSnapshot document = future.get();
         if (document.get("countries") != null) {
-            System.out.println("this shit is already made");//TODO; log dit
+            logger.log(Level.INFO, "Countries zijn al gemaakt");
         } else {
             spelbordModel.CountriesAndIdMap();
             Map<String, Object> data = new HashMap<>();
@@ -229,16 +227,17 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     }
 
     public void handleClicky() {
-        System.out.println("CLICKYYY MOFO");
+        logger.log(Level.INFO, "Geklikt");
     }
 
     public void showCards() {
-        System.out.println("showcard");
+        logger.log(Level.INFO, "showCards aangeroepen");
     }
 
     public void showPlayers() {
-        System.out.println("showplayer");
+        logger.log(Level.INFO, "showPlayers aangeroepen");
     }
+
     public void endTurn() throws ExecutionException, InterruptedException {
         winInt = 0;
         nextTurn();
@@ -251,7 +250,6 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         if (gameModel.getTurnID() == State.TurnID) {
             spelbordView.dobbelen();
             try {
-
                 TimeUnit.SECONDS.sleep(4);
             } catch (InterruptedException e) {
                 logger.log(Level.INFO, "gooit exption: ", e);

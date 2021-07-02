@@ -161,10 +161,10 @@ public class LoginController implements LobbyObservable {
         List<String> arrayValue = (List<String>) document.get("players");
 
         assert arrayValue != null;
-        if (arrayValue.size() == 1) {
+        if (arrayValue.size() == 4) {
             return true;
         } else {
-            logger.log(Level.INFO, "Er zijn teweing mensen in de lobby"); //TODO: dit op het scherm displayen
+            logger.log(Level.INFO, "Er zijn teweing mensen in de lobby");
             return false;
         }
     }

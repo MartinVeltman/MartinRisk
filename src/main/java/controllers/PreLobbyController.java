@@ -26,6 +26,7 @@ public class PreLobbyController {
     public PreLobbyController(){
         playerModel = PlayerModel.getPlayerModelInstance();
     }
+
     public void switchLobby(String name, ActionEvent event) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource(name)));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -36,7 +37,7 @@ public class PreLobbyController {
     }
 
     public void displayUsernameEmpty(){
-        usernameField.setText("Give name");
+        usernameField.setText("Give name !");
     }
 
 
