@@ -27,6 +27,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     private boolean canEnd;
     static SpelbordController spelbordController;
     private SpelbordView view;
+    private int winInt = 0;
 
 
     public static SpelbordController getSpelbordControllerInstance() {
@@ -192,6 +193,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                 docRef.update("State",
                         FieldValue.arrayUnion(buttonid.getId()+" word aangevallen door speler: " + gameModel.getTurnID()+"#"+State.TurnID+ dataBaseInt));
                 dataBaseInt += 1;
+
             } else if (!validCountryCheck(buttonid.getId())) {
                 spelbordView.cantAttack();
             }
@@ -199,6 +201,8 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             spelbordView.notYourTurn();
         }
     }
+
+
 
 
     public boolean validCountryCheck(String country) throws ExecutionException, InterruptedException {
@@ -233,10 +237,12 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         System.out.println("showplayer");
     }
     public void endTurn() throws ExecutionException, InterruptedException {
+        winInt = 0;
         nextTurn();
     }
 
-    public void rollDiceAttack(SpelbordView spelbordView) throws ExecutionException{
+    public void rollDiceAttack(SpelbordView spelbordView) throws ExecutionException, InterruptedException {
+
         ArrayList<Integer> worp1 = new DiceModel().roll(3);
         ArrayList<Integer> worp2 = new DiceModel().roll(3);
         if (gameModel.getTurnID() == State.TurnID) {
@@ -261,15 +267,32 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                         ("De aanvaller wint met een " + attackThrow1 + " en een " + attackThrow2 + "#" + State.TurnID + dataBaseInt));
                 try {
                     setWin();
+                    TimeUnit.SECONDS.sleep(4);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                spelbordView.attackAgain();
+                winInt = 1;
+
             } else if (defendThrow1 >= attackThrow1 && defendThrow2 >= attackThrow2) {
+
                 docRef.update("State", FieldValue.arrayUnion
                         ("De verdediger wint met een " + defendThrow1 + " en een " + defendThrow2 + "#" + State.TurnID + dataBaseInt));
+                TimeUnit.SECONDS.sleep(4);
+                spelbordView.turnEnds();
+                TimeUnit.SECONDS.sleep(2);
+                if(winInt == 1){
+                    lowerWin();
+                }
+                endTurn();
+
             } else {
                 docRef.update("State",
                         FieldValue.arrayUnion("Het is gelijkspel, niemand wint#" +State.TurnID+ dataBaseInt));
+                TimeUnit.SECONDS.sleep(4);
+                spelbordView.turnEnds();
+                TimeUnit.SECONDS.sleep(2);
+                endTurn();
             }
             dataBaseInt += 1;
         } else {
@@ -284,6 +307,16 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
 
         long wins = ((Number) Objects.requireNonNull(document.get("wins" + gameModel.getTurnID()))).longValue();
         docRef.update("wins" + gameModel.getTurnID(),  wins + 1);
+
+    }
+
+    public void lowerWin() throws ExecutionException, InterruptedException {
+        DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
+        ApiFuture<DocumentSnapshot> future = docRef.get();
+        DocumentSnapshot document = future.get();
+
+        long wins = ((Number) Objects.requireNonNull(document.get("wins" + gameModel.getTurnID()))).longValue();
+        docRef.update("wins" + gameModel.getTurnID(),  wins - 0.5);
 
     }
 

@@ -78,7 +78,7 @@ public class SpelbordView {
         new Thread(() -> {
             try {
                 spelbordController.rollDiceAttack(this);
-            } catch (ExecutionException e) {
+            } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
@@ -95,10 +95,10 @@ public class SpelbordView {
         });
     }
 
-
     public void cantAttack(){
         stateField.setText("Je kan je eigen land niet aanvallen dat is zelfmoord");
     }
+
     public void dobbelen(){
         Platform.runLater(() -> {
             stateField.setText("Er word automatisch gedobbeld....");
@@ -106,15 +106,23 @@ public class SpelbordView {
 
     }
 
-
     public void notYourTurn(){
         Platform.runLater(() -> {
             stateField.setText("Je bent niet aan de beurt");
         });
     }
 
+    public void turnEnds(){
+        Platform.runLater(() -> {
+            stateField.setText("Je turn wordt beindigt loser");
+        });
+    }
 
-
+    public void attackAgain(){
+        Platform.runLater(() -> {
+            stateField.setText("Je mag nog een keer als je wilt winnaar");
+        });
+    }
 
 
 
