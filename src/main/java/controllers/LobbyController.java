@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 
 public class LobbyController implements LobbyObserver, UpdatableController{
 
+    PreLobbyController preLobbyController = PreLobbyController.getPreLobbyControllerInstance();
     private Scene scene;
     private Parent root;
     boolean isInGame = false;
@@ -95,11 +96,7 @@ public class LobbyController implements LobbyObserver, UpdatableController{
 
         if (loginController.enoughPlayers()) {
             loginController.gameRunning();
-            root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("FXML/GameMap.fxml")));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
+            preLobbyController.sceneLoader("FXML/GameMap.fxml", event);
             SpelbordController.getSpelbordControllerInstance().setArmyAndCountryInFirebase();
         }
 

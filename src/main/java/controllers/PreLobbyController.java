@@ -19,6 +19,7 @@ public class PreLobbyController {
     private Parent root;
     LoginController loginController = new LoginController();
     PlayerModel playerModel;
+    static PreLobbyController preLobbyController;
 
     @FXML
     TextField usernameField;
@@ -27,7 +28,14 @@ public class PreLobbyController {
         playerModel = PlayerModel.getPlayerModelInstance();
     }
 
-    public void switchLobby(String name, ActionEvent event) throws IOException {
+    public static PreLobbyController getPreLobbyControllerInstance() {
+        if (preLobbyController == null) {
+            preLobbyController = new PreLobbyController();
+        }
+        return preLobbyController;
+    }
+
+    public void sceneLoader(String name, ActionEvent event) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource(name)));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -47,7 +55,7 @@ public class PreLobbyController {
            displayUsernameEmpty();
         } else {
             loginController.checkCreate(usernameField.getText());
-            switchLobby("FXML/Lobby.fxml", event);
+            sceneLoader("FXML/Lobby.fxml", event);
         }
     }
 
@@ -57,7 +65,7 @@ public class PreLobbyController {
             displayUsernameEmpty();
         } else {
             playerModel.setUsername(usernameField.getText());
-            switchLobby("FXML/JoinLobby.fxml", event);
+            sceneLoader("FXML/JoinLobby.fxml", event);
         }
     }
 }

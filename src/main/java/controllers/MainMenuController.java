@@ -14,21 +14,14 @@ public class MainMenuController {
     private Stage stage;
     private Scene scene;
     private Parent root;
+    PreLobbyController preLobbyController = PreLobbyController.getPreLobbyControllerInstance();
 
     public void switchToLobby(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("FXML/Pre-Lobby.fxml")));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        preLobbyController.sceneLoader("FXML/Pre-Lobby.fxml", event);
     }
 
 
     public void openRuleSet(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("FXML/rules1.fxml")));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        preLobbyController.sceneLoader("FXML/rules1.fxml", event);
     }
 }
