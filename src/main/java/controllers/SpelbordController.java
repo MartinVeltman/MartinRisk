@@ -308,6 +308,8 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         }
     }
 
+
+
     public void setWin() throws ExecutionException, InterruptedException {
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
         ApiFuture<DocumentSnapshot> future = docRef.get();
