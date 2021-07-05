@@ -1,23 +1,21 @@
 package views;
 
-
-import controllers.LoginController;
 import controllers.SpelbordController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import models.GameModel;
-import models.SpelbordModel;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SpelbordView {
 
-    public Logger logger;
+    private final static Logger logger = Logger.getLogger(SpelbordView.class.getName());
+    SpelbordController spelbordController = SpelbordController.getSpelbordControllerInstance();
+    GameModel gameModel = new GameModel();
 
     @FXML
     public static ImageView endTurnIcon;
@@ -33,39 +31,17 @@ public class SpelbordView {
     public ImageView cNA1;
 
 
-
-    SpelbordController spelbordController = SpelbordController.getSpelbordControllerInstance();
-    static SpelbordModel spelbordModel;
-    GameModel gameModel = new GameModel();
-    //GameModel gameModel;
-    //static SpelbordViewController spelbordViewController;
-    LoginController loginController = new LoginController();
-
     @FXML
     public void initialize() {
         spelbordController.setView(this);
     }
-
-//    public static SpelbordViewController getSpelbordViewControllerInstance() {
-//        if (spelbordViewController == null) {
-//            spelbordViewController = new SpelbordViewController();
-//            System.out.println("nieuwe instantie van spelBordViewController is aangemaakt");
-//        }
-//        return spelbordViewController;
-//    }
-
-//    public SpelbordViewController() {
-//        spelbordController.registerObserver(this);
-//    }
 
 
     public void getButtonID(ActionEvent event) throws ExecutionException, InterruptedException{
         spelbordController.attackCountry(this, event);
     }
 
-    public void handleClicky() {
-        spelbordController.handleClicky();
-    }
+
 
     public void showCards() {
         spelbordController.showCards();
@@ -73,10 +49,7 @@ public class SpelbordView {
 
     public void showPlayers() {
         spelbordController.showPlayers();
-        ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setHue(0.2);
-        cNA1.setEffect(colorAdjust);
-    }//TODO op deze manier proberen kleur aan country te geven
+    }
 
     public void rollDice() {
         new Thread(() -> {
@@ -133,35 +106,5 @@ public class SpelbordView {
             stateField.setText("Je mag nog een keer als je wilt winnaar");
         });
     }
-
-
-
-
-    //TODO FIX HUD
-//    public void hideHUD() {
-//        cardIcon.setVisible(false);
-//        diceIcon.setVisible(false);
-//        playerIcon.setVisible(false);
-//    }
-//
-//    public void showHUD() {
-//        cardIcon.setVisible(true);
-//        diceIcon.setVisible(true);
-//        playerIcon.setVisible(true);
-//    }
-//
-//    public void HUD() throws ExecutionException, InterruptedException {
-//        DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
-//        ApiFuture<DocumentSnapshot> future = docRef.get();
-//        DocumentSnapshot document = future.get();
-//
-//        if (State.TurnID == Integer.parseInt(document.get("gamestateTurnID").toString())) {
-//            showHUD();
-//        } else {
-//            hideHUD();
-//        }
-//    }
-
-
 
 }

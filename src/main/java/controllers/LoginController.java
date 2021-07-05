@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class LoginController implements LobbyObservable {
 
     private final static Logger logger = Logger.getLogger(LoginController.class.getName());
-
+    private final int maxPlayers = 4;
     private static final List<LobbyObserver> observers = new ArrayList<>();
 
     public LoginController() {
@@ -71,7 +71,7 @@ public class LoginController implements LobbyObservable {
         if (document.exists()) {
             List<String> arrayValue = (List<String>) document.get("players");
             assert arrayValue != null;
-            if (arrayValue.size() < 4) {
+            if (arrayValue.size() < maxPlayers) {
                 return true;
             } else {
                 logger.log(Level.INFO, "Lobby is al vol");
@@ -121,7 +121,6 @@ public class LoginController implements LobbyObservable {
             } catch (InterruptedException e) {
                 logger.log(Level.INFO, "gooit exption: ", e);
             } catch (ExecutionException e) {
-
                 return false;
             }
         }
@@ -161,7 +160,7 @@ public class LoginController implements LobbyObservable {
         List<String> arrayValue = (List<String>) document.get("players");
 
         assert arrayValue != null;
-        if (arrayValue.size() == 1) {
+        if (arrayValue.size() == maxPlayers) {
             return true;
         } else {
             logger.log(Level.INFO, "Er zijn teweing mensen in de lobby");

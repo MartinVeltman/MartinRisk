@@ -124,14 +124,15 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     }
 
     public void nextTurn() throws ExecutionException, InterruptedException {
+        final int maxPlayers = 4;
         if (gameModel.isGameOver()) {
             return;
         }
 
-        if (gameModel.getTurnID() < 4) {
+        if (gameModel.getTurnID() < maxPlayers) {
             gameModel.setTurnID(gameModel.getTurnID() + 1);
             nextTurnIDFirebase();
-        } else if (gameModel.getTurnID() == 4) {
+        } else if (gameModel.getTurnID() == maxPlayers) {
             gameModel.setTurnID(1);
             nextTurnIDFirebase();
         }
@@ -159,6 +160,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     }
 
     public void attachWinListener() {
+        final int amountToWin= 10;
         DocumentReference docRef = State.database.getFirestoreDatabase().collection(State.lobbycode).document("players");
         docRef.addSnapshotListener((documentSnapshot, e) -> {
             if (view == null) {
@@ -166,7 +168,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
             }
             if (documentSnapshot != null) {
                 long winAmount = ((Number) Objects.requireNonNull(documentSnapshot.getData()).get("wins"+gameModel.getTurnID())).longValue();
-                if (winAmount >= 10) {
+                if (winAmount >= amountToWin) {
                     displayWinner();
                     try {
                         TimeUnit.SECONDS.sleep(4);
@@ -228,9 +230,6 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
         return false;
     }
 
-    public void handleClicky() {
-        logger.log(Level.INFO, "Geklikt");
-    }
 
     public void showCards() {
         logger.log(Level.INFO, "showCards aangeroepen");
@@ -249,10 +248,10 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
     public void rollDiceAttack(SpelbordView spelbordView) throws ExecutionException, InterruptedException {
         if (selectCountry == 1) {
 
-            ArrayList<Integer> worp1 = new DiceModel().roll(3);
+            ArrayList<Integer> worp1 = new DiceModel().roll(3); //nieuwe worp aanmaken
             ArrayList<Integer> worp2 = new DiceModel().roll(3);
-            if (gameModel.getTurnID() == State.TurnID) {
-                spelbordView.dobbelen();
+            if (gameModel.getTurnID() == State.TurnID) {  //Kijkt of het jou turn is
+                spelbordView.dobbelen();  // dan dobbelen
                 try {
                     TimeUnit.SECONDS.sleep(4);
                 } catch (InterruptedException e) {
@@ -262,7 +261,7 @@ public class SpelbordController implements SpelbordObserver, UpdatableController
                 docRef.update("attackThrow", worp1);
                 docRef.update("defendThrow", worp2);
 
-                int attackThrow1 = worp1.get(0);
+                int attackThrow1 = worp1.get(0); //Is onnodig maar handig voor leesbaarheid
                 int defendThrow1 = worp2.get(0);
                 int attackThrow2 = worp1.get(1);
                 int defendThrow2 = worp2.get(1);
