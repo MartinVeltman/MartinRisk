@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GameController {
+
     private final CollectionReference colRef;
     private final static Logger logger = Logger.getLogger(GameController.class.getName());
 

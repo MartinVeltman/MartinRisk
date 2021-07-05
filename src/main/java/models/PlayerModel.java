@@ -23,6 +23,7 @@ public class PlayerModel{
     public PlayerModel(String username, int turnID, int wins) {
         this.username = username;
         this.turnID = turnID;
+
     }
 
     public String getUsername() {
@@ -38,4 +39,5 @@ public class PlayerModel{
     public void setTurnID(int turnID) {
         this.turnID = turnID;
     }
+
 }

@@ -2,10 +2,7 @@ package configuration;
 
 
 import com.google.auth.oauth2.GoogleCredentials;
-
 import com.google.cloud.firestore.Firestore;
-
-
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
@@ -17,7 +14,7 @@ import java.util.logging.Logger;
 
 public class Database {
 
-    public Logger logger;
+    private final static Logger logger = Logger.getLogger(Database.class.getName());
     private static final String PRIVATEKEYLOCATION = "src/main/resources/json/niewe-f7dc6-firebase-adminsdk-afalt-d50b0555bd.json";
     private static final String DATABASEURL = "niewe-f7dc6.iam.gserviceaccount.com";
     private Firestore db;

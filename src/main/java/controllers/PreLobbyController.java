@@ -14,9 +14,6 @@ import java.util.Objects;
 
 public class PreLobbyController {
 
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
     LoginController loginController = new LoginController();
     PlayerModel playerModel;
     static PreLobbyController preLobbyController;
@@ -36,9 +33,9 @@ public class PreLobbyController {
     }
 
     public void sceneLoader(String name, ActionEvent event) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource(name)));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource(name)));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
 
