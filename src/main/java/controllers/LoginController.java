@@ -161,7 +161,7 @@ public class LoginController implements LobbyObservable {
         List<String> arrayValue = (List<String>) document.get("players");
 
         assert arrayValue != null;
-        if (arrayValue.size() == 2) {
+        if (arrayValue.size() == 1) {
             return true;
         } else {
             logger.log(Level.INFO, "Er zijn teweing mensen in de lobby");

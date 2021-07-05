@@ -8,11 +8,9 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import observers.LobbyObservable;
 import observers.LobbyObserver;
 import java.io.IOException;
@@ -35,7 +33,7 @@ public class LobbyController implements LobbyObserver, UpdatableController{
 
     static LoginController loginController = new LoginController();
     @FXML
-    private Label username1; //TODO: probeer de username imports meer dry te maken
+    private Label username1;
     @FXML
     private Label username2;
     @FXML
@@ -105,13 +103,12 @@ public class LobbyController implements LobbyObserver, UpdatableController{
 
 
     @FXML
-    public void initialize() throws ExecutionException, InterruptedException {
+    public void initialize(){
         GameController gameController = new GameController();
         gameController.listen("players", this);
         registerObserver(this);
         attachlistener();
 
-//        lobbyView = new LobbyView();
         lobbyCode.setText(State.lobbycode);
 
     }
@@ -148,8 +145,7 @@ public class LobbyController implements LobbyObserver, UpdatableController{
             } });
         }
 
-    //    //TODO: Initialize DRY maken
-//
+
 public static void registerObserver(LobbyObserver sbv) {
     loginController.register(sbv);
 }
